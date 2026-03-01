@@ -479,7 +479,11 @@ a    .card{
 
   <!-- ALARMES -->
   <section class="card hide" id="tab-alarmes">
-    <h2>⏰ Alarmes + Notificações</h2>
+    <h2>⏰ Alarmes + Notificações</h2>try{
+  const a = document.getElementById("alarmSound");
+  if(a){ a.currentTime = 0; await a.play(); }
+  if(navigator.vibrate) navigator.vibrate([200, 80, 200, 80, 400]);
+}catch(e){}
 
     <div class="row">
       <div>
