@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b2a66" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <title>Planner de Estudos — Sheila (PWA)</title>
+
+  <style>
+    :root{
+      --bg:#0b2a66;
+      --card:#123a8a;
+      --text:#ffffff;
+      --muted:rgba(255,255,255,.82);
+      --stroke:rgba(255,255,255,.18);
+      --gold:#FFD700;
+      --ok:#22c55e;
+      --danger:#ef4444;
+      --btn2:rgba(255,255,255,.12);
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:12px;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #1a4bb8 0%, var(--bg) 50%, #061a3f 100%);
+      color:var(--text);
+    }
+    .wrap{max-width:1300px; margin:0 auto; display:grid; gap:12px}
+
+    header{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      padding:12px; border:1px solid var(--stroke); border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+    }
+    .title h1{margin:0; font-size:18px}
+    .title p{margin:4px 0 0; color:var(--muted); font-size:12px}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+
+    button{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      transition:.15s transform ease, .15s opacity ease;
+    }
+    button:hover{transform: translateY(-1px)}
+    button.secondary{background: var(--btn2)}
+    button.gold{
+      border-color: rgba(255,215,0,.35);
+      background: linear-gradient(180deg, rgba(255,215,0,.25), rgba(255,215,0,.12));
+    }
+    button.danger{
+      border-color: rgba(239,68,68,.4);
+      background: linear-gradient(180deg, rgba(239,68,68,.25), rgba(239,68,68,.12));
+    }
+
+    .tabs{
+      display:flex; gap:8px; flex-wrap:wrap;
+      padding:10px;
+      border:1px solid var(--stroke); border-radius:var(--radius);
+      background: rgba(0,0,0,.10);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 8px;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+    .tabBtn.active{
+      border-color: rgba(255,215,0,.35);
+      box-shadow: 0 0 0 2px rgba(255,215,0,.12) inset;
+    }
+
+    .card{
+      padding:14px;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .sub{color:var(--muted); font-size:12px; margin-top:4px}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .row > *{flex:1}
+    label{display:block; font-size:12px; color:var(--muted); margin:8px 0 6px}
+    input, textarea, select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{min-height:100px; resize:vertical}
+
+    .grid2{display:grid; gap:12px; grid-template-columns: 1.1fr .9fr;}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} }
+
+    /* Paisagem: no landscape, aproveita mais */
+    @media (orientation: landscape) and (max-height: 520px){
+      body{padding:8px}
+      .tabs{top:0}
+      textarea{min-height:72px}
+      header{padding:10px}
+    }
+
+    .sep{height:1px; background: var(--stroke); margin:12px 0}
+
+    /* Mood + checklist */
+    .moodRow{display:flex; gap:8px; flex-wrap:wrap}
+    .moodBtn{
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:16px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.14);
+    }
+    .moodBtn.active{
+      outline:2px solid rgba(255,215,0,.35);
+      background: rgba(255,215,0,.12);
+    }
+
+    /* Calendar */
+    .calHead{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+    .calGrid{margin-top:10px; display:grid; grid-template-columns: repeat(7, 1fr); gap:8px;}
+    .dow{text-align:center; font-size:11px; color:var(--muted); padding:6px 0;}
+    .day{
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      background: rgba(0,0,0,.14);
+      min-height:86px;
+      padding:8px;
+      cursor:pointer;
+      overflow:hidden;
+    }
+    .day:hover{outline:1px solid rgba(255,255,255,.18)}
+    .day .n{font-weight:900; font-size:12px; display:flex; justify-content:space-between;}
+    .dot{width:8px; height:8px; border-radius:999px; background: var(--gold); display:inline-block}
+    .today{outline:2px solid rgba(255,215,0,.35)}
+    .dim{opacity:.45}
+    .notesMini{margin-top:6px; font-size:11px; color:var(--muted); line-height:1.2; max-height:44px; overflow:hidden;}
+
+    .item{
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:10px;
+      background: rgba(0,0,0,.14);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .item b{display:block; font-size:13px}
+    .item .meta{font-size:12px; color:var(--muted); margin-top:2px}
+    .badge{
+      font-size:11px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      white-space:nowrap;
+    }
+
+    .okText{color: rgba(34,197,94,.95); font-weight:800}
+    .warnText{color: rgba(255,215,0,.95); font-weight:800}
+
+    .hide{display:none}
+
+    /* Pomodoro */
+    .timerBox{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      align-items:stretch;
+    }
+    @media (max-width: 700px){ .timerBox{grid-template-columns:1fr} }
+    .bigTime{
+      font-size:42px;
+      font-weight:900;
+      letter-spacing:1px;
+      text-align:center;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+    }
+    .center{text-align:center}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="title">
+      <h1>Planner de Estudos — Sheila</h1>
+      <p id="todayLine">Carregando…</p>
+    </div>
+    <div class="actions">
+      <button class="gold" id="btnInstall" disabled>📲 Instalar</button>
+      <button id="btnShare" class="secondary">🔗 Compartilhar</button>
+      <button id="btnNotif" class="secondary">🔔 Notificações</button>
+      <button id="btnExport" class="secondary">⬇️ Backup</button>
+      <button id="btnImport" class="secondary">⬆️ Restaurar</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tabBtn gold active" data-tab="hoje">📌 Hoje</button>
+    <button class="tabBtn secondary" data-tab="cal">📅 Calendário</button>
+    <button class="tabBtn secondary" data-tab="diario">📔 Diário</button>
+    <button class="tabBtn secondary" data-tab="alarmes">⏰ Alarmes</button>
+    <button class="tabBtn secondary" data-tab="dash">📊 Dashboard</button>
+    <button class="tabBtn secondary" data-tab="perfil">👤 Perfil</button>
+  </nav>
+
+  <!-- HOJE -->
+  <section class="card" id="tab-hoje">
+    <h2>📌 Hoje • Estudo + Versículo</h2>
+
+    <div class="grid2">
+      <div class="card" style="background: rgba(0,0,0,.10)">
+        <h2>🧠 Próxima sessão + Pomodoro</h2>
+
+        <div class="row">
+          <div>
+            <label>O que você vai estudar agora?</label>
+            <input id="nextTopic" placeholder="Ex.: Power BI, Estatística, Contabilidade…" />
+          </div>
+          <div>
+            <label>Duração (min)</label>
+            <input id="pomoMin" type="number" min="5" step="5" placeholder="25" />
+          </div>
+        </div>
+
+        <div class="timerBox">
+          <div class="bigTime" id="timeLeft">25:00</div>
+          <div class="card" style="background: rgba(0,0,0,.12)">
+            <div class="row">
+              <button class="gold" id="btnStart">▶ Iniciar</button>
+              <button class="secondary" id="btnPause">⏸ Pausar</button>
+              <button class="danger" id="btnReset">⟲ Reset</button>
+            </div>
+            <div class="sep"></div>
+            <div class="row">
+              <button class="secondary" id="btnShort">☕ Pausa 5</button>
+              <button class="secondary" id="btnLong">🛌 Pausa 15</button>
+            </div>
+            <div class="sub" id="pomoHint">Dica: instale o app para notificações funcionarem melhor.</div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <h2>📝 Registro rápido de hoje</h2>
+        <div class="row">
+          <div>
+            <label>Tempo estudado hoje (min)</label>
+            <input type="number" id="studyMinutes" min="0" step="5" placeholder="Ex.: 60" />
+          </div>
+          <div>
+            <label>Prioridade do dia</label>
+            <input id="priority" placeholder="Ex.: Matemática / Power BI / Inglês" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Tópicos estudados (resumo)</label>
+            <textarea id="topics" placeholder="O que você estudou hoje?"></textarea>
+          </div>
+          <div>
+            <label>Exercícios / prática</label>
+            <textarea id="practice" placeholder="Questões, mini projeto, revisão…"></textarea>
+          </div>
+        </div>
+
+        <div class="row" style="align-items:flex-end">
+          <div>
+            <label>🙂 Humor do dia</label>
+            <div class="moodRow" id="moodRow">
+              <button class="moodBtn" data-mood="😀">😀</button>
+              <button class="moodBtn" data-mood="🙂">🙂</button>
+              <button class="moodBtn" data-mood="😐">😐</button>
+              <button class="moodBtn" data-mood="😔">😔</button>
+              <button class="moodBtn" data-mood="😣">😣</button>
+            </div>
+          </div>
+          <div style="min-width:240px">
+            <button class="gold" id="saveToday" style="width:100%">💾 Salvar Hoje</button>
+            <div class="sub" id="saveHint">Salvando…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background: rgba(0,0,0,.10)">
+        <h2>📖 Versículo do dia (automático)</h2>
+        <div class="item">
+          <div>
+            <b id="verseRef">—</b>
+            <div class="meta" id="verseText">—</div>
+          </div>
+          <div class="badge" id="verseDayTag">Hoje</div>
+        </div>
+
+        <div class="sep"></div>
+
+        <h2>🎯 Metas</h2>
+        <div class="row">
+          <div>
+            <label>Meta diária (minutos)</label>
+            <input type="number" id="dailyGoal" min="0" step="5" placeholder="60" />
+          </div>
+          <div>
+            <label>Meta semanal (minutos)</label>
+            <input type="number" id="weeklyGoal" min="0" step="10" placeholder="300" />
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <h2>✅ Checklist do dia</h2>
+        <div class="moodRow">
+          <button class="moodBtn" data-check="rev" title="Revisão">📌</button>
+          <button class="moodBtn" data-check="ex" title="Exercícios">🧩</button>
+          <button class="moodBtn" data-check="proj" title="Projeto/Prática">🛠️</button>
+          <button class="moodBtn" data-check="anot" title="Anotações">📝</button>
+          <button class="moodBtn" data-check="desc" title="Descanso/sono">😴</button>
+        </div>
+        <div class="sub">Toque para marcar ✅ (fica salvo no dia)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDÁRIO -->
+  <section class="card hide" id="tab-cal">
+    <h2>📅 Calendário de Estudos <span class="badge">toque num dia</span></h2>
+
+    <div class="calHead">
+      <div class="row" style="align-items:center; max-width:520px">
+        <button id="prevMonth" class="secondary">◀</button>
+        <div>
+          <div style="font-weight:900" id="monthTitle">—</div>
+          <div class="sub" id="monthSub">Dias com registro aparecem com ponto dourado</div>
+        </div>
+        <button id="nextMonth" class="secondary">▶</button>
+      </div>
+
+      <div class="row" style="max-width:520px">
+        <div>
+          <label>Dia selecionado</label>
+          <input id="selectedDate" disabled />
+        </div>
+        <div>
+          <label>Minutos no dia</label>
+          <input type="number" id="calMinutes" min="0" step="5" />
+        </div>
+      </div>
+    </div>
+
+    <div class="calGrid" id="dowRow"></div>
+    <div class="calGrid" id="calGrid"></div>
+
+    <div class="sep"></div>
+
+    <div class="row">
+      <div>
+        <label>O que ficou difícil?</label>
+        <textarea id="hard" placeholder="Pontos que travaram / dúvidas"></textarea>
+      </div>
+      <div>
+        <label>Plano para amanhã</label>
+        <textarea id="tomorrow" placeholder="O que você quer fazer amanhã"></textarea>
+      </div>
+    </div>
+
+    <div class="row" style="align-items:flex-end">
+      <button class="gold" id="saveDay">💾 Salvar Dia</button>
+      <div class="sub">Dica: você também pode salvar no “Hoje”.</div>
+    </div>
+  </section>
+
+  <!-- DIÁRIO -->
+  <section class="card hide" id="tab-diario">
+    <h2>📔 Diário de Estudos</h2>
+    <label>Escreva livremente (fica salvo offline)</label>
+    <textarea id="diary" placeholder="Como foi seu dia? foco, oração, gratidão, metas…"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button id="btnDiaryToday" class="secondary">📌 Inserir data</button>
+      <button id="btnClearDiary" class="danger">🧹 Limpar diário</button>
+    </div>
+  </section>
+
+  <!-- ALARMES -->
+  <section class="card hide" id="tab-alarmes">
+    <h2>⏰ Alarmes + Notificações</h2>
+
+    <div class="row">
+      <div>
+        <label>Título do lembrete</label>
+        <input id="alarmTitle" placeholder="Ex.: Revisar aula / Fazer questões" />
+      </div>
+      <div>
+        <label>Data e hora</label>
+        <input id="alarmWhen" type="datetime-local" />
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="btnAddAlarm" class="gold">➕ Criar alarme</button>
+      <button id="btnTestNotif" class="secondary">🔔 Testar notificação</button>
+    </div>
+
+    <div class="sub">No Android, notificações funcionam melhor com o app instalado.</div>
+
+    <div class="sep"></div>
+    <div id="alarmsList" style="display:grid; gap:8px"></div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section class="card hide" id="tab-dash">
+    <h2>📊 Dashboard de Progresso</h2>
+
+    <div class="row">
+      <div class="item">
+        <div>
+          <b>Hoje</b>
+          <div class="meta"><span id="dashTodayMin">0</span> min • humor <span id="dashMood">—</span></div>
+        </div>
+        <div class="badge" id="dashTodayStatus">—</div>
+      </div>
+
+      <div class="item">
+        <div>
+          <b>Semana</b>
+          <div class="meta"><span id="dashWeekMin">0</span> min estudados</div>
+        </div>
+        <div class="badge" id="dashWeekStatus">—</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="item">
+        <div>
+          <b>Streak</b>
+          <div class="meta"><span id="dashStreak">0</span> dias seguidos</div>
+        </div>
+        <div class="badge">Consistência</div>
+      </div>
+
+      <div class="item">
+        <div>
+          <b>Mês</b>
+          <div class="meta"><span id="dashMonthMin">0</span> min</div>
+        </div>
+        <div class="badge">Acumulado</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERFIL -->
+  <section class="card hide" id="tab-perfil">
+    <h2>👤 Dados pessoais</h2>
+
+    <div class="row">
+      <div>
+        <label>Nome</label>
+        <input id="pName" placeholder="Sheila" />
+      </div>
+      <div>
+        <label>Curso / Área</label>
+        <input id="pCourse" placeholder="Ex.: Data / Contábil / Concurso" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Objetivo principal</label>
+        <input id="pGoal" placeholder="Ex.: passar na prova / aprender Power BI" />
+      </div>
+      <div>
+        <label>Rotina ideal</label>
+        <input id="pRoutine" placeholder="Ex.: 2h manhã + 30min revisão" />
+      </div>
+    </div>
+
+    <div class="sep"></div>
+    <button class="danger" id="btnResetAll">🧨 Zerar tudo (apagar dados)</button>
+    <div class="sub">Isso apaga o que está salvo no dispositivo. Não afeta backups que você exportou.</div>
+  </section>
+
+  <footer class="card">
+    <div class="sub">
+      ✅ Offline + salvar automático • 📲 Instalar como app • 🔔 Alarmes/Notificações • 🔗 Compartilhar  
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* =========================
+   STATE + STORAGE
+========================= */
+const LS_KEY = "planner_estudos_tabs_v2";
+const state = {
+  profile: { name: "Sheila", course: "", goal:"", routine:"" },
+  goals: { daily: 60, weekly: 300 },
+  days: {},      // "YYYY-MM-DD": { minutes, priority, topics, practice, hard, tomorrow, mood, checks, updatedAt }
+  diary: "",
+  alarms: [],    // [{id, title, whenISO, createdAt, firedAt?}]
+  ui: { calYear: 0, calMonth: 0, selectedDate: "" },
+  notifEnabled: false,
+  pomo: { topic:"", minutes:25, running:false, endsAt: null, pausedLeft: null }
+};
+
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      const obj = JSON.parse(raw);
+      Object.assign(state, obj);
+    }
+  }catch(e){}
+}
+function save(){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  const el = document.getElementById("saveHint");
+  if(el) el.innerText = "Salvo ✅ " + new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+}
+
+function v(id){ return document.getElementById(id).value; }
+function pad(n){ return String(n).padStart(2,"0"); }
+function toYMD(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function parseYMD(ymd){ const [y,m,da]=ymd.split("-").map(Number); return new Date(y,m-1,da); }
+function sameYMD(a,b){ return toYMD(a)===toYMD(b); }
+function startOfWeek(d){
+  const x = new Date(d);
+  const day = (x.getDay()+6)%7;
+  x.setDate(x.getDate()-day);
+  x.setHours(0,0,0,0);
+  return x;
+}
+function dayOfYear(d){
+  const start = new Date(d.getFullYear(),0,0);
+  return Math.floor((d-start)/86400000);
+}
+function escapeHtml(s){
+  return (s||"").replace(/[&<>"']/g, c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+
+/* =========================
+   VERSE OF THE DAY
+========================= */
+const VERSES = [
+  {ref:"Provérbios 4:13", text:"Apegue-se à instrução, não a largue; guarde-a, pois ela é a sua vida."},
+  {ref:"Tiago 1:5", text:"Se algum de vocês tem falta de sabedoria, peça-a a Deus, que a todos dá livremente, de boa vontade; e lhe será concedida."},
+  {ref:"Colossenses 3:23", text:"Tudo o que fizerem, façam de todo o coração, como para o Senhor, e não para os homens."},
+  {ref:"Josué 1:9", text:"Não fui eu que lhe ordenei? Seja forte e corajoso! Não se apavore nem desanime, pois o Senhor, o seu Deus, estará com você por onde você andar."},
+  {ref:"Salmos 119:105", text:"A tua palavra é lâmpada que ilumina os meus passos e luz que clareia o meu caminho."},
+  {ref:"Isaías 41:10", text:"Não tema, pois eu estou com você; não tenha medo, pois eu sou o seu Deus. Eu o fortalecerei e o ajudarei; eu o segurarei com a minha mão direita vitoriosa."},
+  {ref:"Filipenses 4:13", text:"Tudo posso naquele que me fortalece."},
+  {ref:"2 Timóteo 1:7", text:"Pois Deus não nos deu espírito de covardia, mas de poder, de amor e de equilíbrio."},
+  {ref:"Salmos 37:5", text:"Entregue o seu caminho ao Senhor; confie nele, e ele agirá."},
+  {ref:"Mateus 6:33", text:"Busquem, em primeiro lugar, o Reino de Deus e a sua justiça, e todas essas coisas lhes serão acrescentadas."},
+  {ref:"Romanos 12:2", text:"Não se amoldem ao padrão deste mundo, mas transformem-se pela renovação da sua mente."},
+  {ref:"Salmos 121:2", text:"O meu socorro vem do Senhor, que fez os céus e a terra."},
+  {ref:"Provérbios 3:5-6", text:"Confie no Senhor de todo o seu coração e não se apoie em seu próprio entendimento; reconheça o Senhor em todos os seus caminhos, e ele endireitará as suas veredas."},
+  {ref:"1 Coríntios 15:58", text:"Portanto, meus amados irmãos, sejam firmes e constantes, sempre abundantes na obra do Senhor, sabendo que, no Senhor, o trabalho de vocês não é em vão."},
+  {ref:"Salmos 90:17", text:"Seja sobre nós a bondade do Senhor, nosso Deus. Confirma para nós a obra das nossas mãos; sim, confirma a obra das nossas mãos."},
+];
+
+function renderTodayLine(){
+  const now = new Date();
+  document.getElementById("todayLine").innerText =
+    now.toLocaleDateString("pt-BR",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+}
+function renderVerse(){
+  const now = new Date();
+  const idx = dayOfYear(now) % VERSES.length;
+  const v = VERSES[idx];
+  document.getElementById("verseRef").innerText = v.ref;
+  document.getElementById("verseText").innerText = v.text;
+  document.getElementById("verseDayTag").innerText = toYMD(now);
+}
+
+/* =========================
+   TABS
+========================= */
+function setTab(name){
+  document.querySelectorAll(".tabBtn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.tab===name);
+    b.classList.toggle("gold", b.dataset.tab===name);
+    b.classList.toggle("secondary", b.dataset.tab!==name);
+  });
+  ["hoje","cal","diario","alarmes","dash","perfil"].forEach(t=>{
+    document.getElementById("tab-"+t).classList.toggle("hide", t!==name);
+  });
+}
+document.getElementById("tabs").addEventListener("click",(e)=>{
+  const btn = e.target.closest(".tabBtn");
+  if(!btn) return;
+  setTab(btn.dataset.tab);
+});
+
+/* =========================
+   CALENDAR
+========================= */
+const DOW = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+function initCalendar(){
+  const now = new Date();
+  if(!state.ui.calYear && !state.ui.calMonth){
+    state.ui.calYear = now.getFullYear();
+    state.ui.calMonth = now.getMonth();
+  }
+  if(!state.ui.selectedDate) state.ui.selectedDate = toYMD(now);
+  renderDow();
+  renderCalendar();
+  selectDay(state.ui.selectedDate);
+}
+function renderDow(){
+  const el = document.getElementById("dowRow");
+  el.innerHTML="";
+  DOW.forEach(d=>{
+    const x=document.createElement("div");
+    x.className="dow";
+    x.innerText=d;
+    el.appendChild(x);
+  });
+}
+function renderCalendar(){
+  const y=state.ui.calYear, m=state.ui.calMonth;
+  const first=new Date(y,m,1);
+  const last=new Date(y,m+1,0);
+  const title=first.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+  document.getElementById("monthTitle").innerText = title[0].toUpperCase()+title.slice(1);
+
+  const startIdx=(first.getDay()+6)%7;
+  const totalDays=last.getDate();
+  const cells=[];
+  for(let i=0;i<startIdx;i++) cells.push({type:"pad"});
+  for(let d=1; d<=totalDays; d++) cells.push({type:"day", date:new Date(y,m,d)});
+  while(cells.length%7!==0) cells.push({type:"pad"});
+
+  const grid=document.getElementById("calGrid");
+  grid.innerHTML="";
+  const today=new Date();
+
+  cells.forEach(c=>{
+    const div=document.createElement("div");
+    if(c.type==="pad"){
+      div.className="day dim";
+      div.innerHTML=`<div class="n"><span> </span><span> </span></div>`;
+      grid.appendChild(div);
+      return;
+    }
+    const ymd=toYMD(c.date);
+    const e=state.days[ymd];
+    const has = e && (e.minutes || e.priority || e.topics || e.practice || e.hard || e.tomorrow || e.mood);
+    div.className="day"+(sameYMD(c.date,today)?" today":"");
+    if(state.ui.selectedDate===ymd) div.style.outline="2px solid rgba(255,255,255,.22)";
+    div.onclick=()=>selectDay(ymd);
+
+    const mini=(e?.priority || e?.topics || "").trim().slice(0,70);
+    div.innerHTML=`
+      <div class="n">
+        <span>${c.date.getDate()}</span>
+        <span>${has?'<span class="dot"></span>':''}</span>
+      </div>
+      <div class="notesMini">${mini?escapeHtml(mini):(has?"Registro salvo":"—")}</div>
+    `;
+    grid.appendChild(div);
+  });
+
+  renderDashboard();
+}
+function selectDay(ymd){
+  state.ui.selectedDate=ymd;
+  document.getElementById("selectedDate").value=ymd;
+
+  const e=state.days[ymd] || { minutes:"", priority:"", topics:"", practice:"", hard:"", tomorrow:"", mood:"", checks:{} };
+
+  // Calendar tab fields
+  document.getElementById("calMinutes").value = e.minutes ?? 0;
+  document.getElementById("hard").value = e.hard ?? "";
+  document.getElementById("tomorrow").value = e.tomorrow ?? "";
+
+  // Today tab fields (espelha no dia de hoje)
+  const today=toYMD(new Date());
+  if(ymd===today){
+    document.getElementById("studyMinutes").value = e.minutes ?? 0;
+    document.getElementById("priority").value = e.priority ?? "";
+    document.getElementById("topics").value = e.topics ?? "";
+    document.getElementById("practice").value = e.practice ?? "";
+
+    // mood
+    document.querySelectorAll("#moodRow .moodBtn").forEach(btn=>{
+      btn.classList.toggle("active", btn.dataset.mood === (e.mood||""));
+    });
+
+    // checks
+    document.querySelectorAll("[data-check]").forEach(btn=>{
+      const key=btn.dataset.check;
+      btn.classList.toggle("active", !!(e.checks && e.checks[key]));
+    });
+  }
+
+  save();
+  renderCalendar();
+}
+function saveDayFromCalendar(){
+  const ymd=state.ui.selectedDate;
+  if(!ymd) return;
+  const prev=state.days[ymd] || {};
+  state.days[ymd]={
+    ...prev,
+    minutes: Number(v("calMinutes")||0),
+    hard: document.getElementById("hard").value.trim(),
+    tomorrow: document.getElementById("tomorrow").value.trim(),
+    updatedAt: new Date().toISOString()
+  };
+  save();
+  renderCalendar();
+  renderDashboard();
+}
+
+/* =========================
+   TODAY SAVE
+========================= */
+function saveToday(){
+  const ymd = toYMD(new Date());
+  state.ui.selectedDate = ymd;
+
+  const prev = state.days[ymd] || {};
+  const minutes = Number(document.getElementById("studyMinutes").value || 0);
+
+  const moodBtn = [...document.querySelectorAll("#moodRow .moodBtn")].find(b=>b.classList.contains("active"));
+  const mood = moodBtn ? moodBtn.dataset.mood : "";
+
+  const checks = {};
+  document.querySelectorAll("[data-check]").forEach(btn=>{
+    checks[btn.dataset.check] = btn.classList.contains("active");
+  });
+
+  state.days[ymd] = {
+    ...prev,
+    minutes,
+    priority: document.getElementById("priority").value.trim(),
+    topics: document.getElementById("topics").value.trim(),
+    practice: document.getElementById("practice").value.trim(),
+    mood,
+    checks,
+    updatedAt: new Date().toISOString()
+  };
+
+  save();
+  renderCalendar();
+  renderDashboard();
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+function minutesFor(ymd){ return Number(state.days[ymd]?.minutes || 0); }
+function renderDashboard(){
+  const now=new Date();
+  const today=toYMD(now);
+
+  const dailyGoal=Number(state.goals.daily||0);
+  const weeklyGoal=Number(state.goals.weekly||0);
+
+  const tMin=minutesFor(today);
+  document.getElementById("dashTodayMin").innerText=tMin;
+  document.getElementById("dashMood").innerText=state.days[today]?.mood || "—";
+  document.getElementById("dashTodayStatus").innerHTML =
+    (dailyGoal>0 && tMin>=dailyGoal) ? `<span class="okText">Meta ✅</span>` :
+    (dailyGoal>0 && tMin>0) ? `<span class="warnText">Em progresso</span>` : `—`;
+
+  const start=startOfWeek(now);
+  let weekSum=0;
+  for(let i=0;i<7;i++){
+    const d=new Date(start); d.setDate(start.getDate()+i);
+    weekSum+=minutesFor(toYMD(d));
+  }
+  document.getElementById("dashWeekMin").innerText=weekSum;
+  document.getElementById("dashWeekStatus").innerHTML =
+    (weeklyGoal>0 && weekSum>=weeklyGoal) ? `<span class="okText">Meta ✅</span>` :
+    (weeklyGoal>0 && weekSum>0) ? `<span class="warnText">Quase lá</span>` : `—`;
+
+  const y=state.ui.calYear, m=state.ui.calMonth;
+  let monthSum=0;
+  const last=new Date(y,m+1,0).getDate();
+  for(let d=1; d<=last; d++){
+    monthSum += minutesFor(`${y}-${pad(m+1)}-${pad(d)}`);
+  }
+  document.getElementById("dashMonthMin").innerText=monthSum;
+
+  // streak
+  let streak=0;
+  let cursor=new Date(now);
+  for(let i=0;i<366;i++){
+    const ymd=toYMD(cursor);
+    if(minutesFor(ymd)>0){ streak++; cursor.setDate(cursor.getDate()-1); }
+    else break;
+  }
+  document.getElementById("dashStreak").innerText=streak;
+}
+
+/* =========================
+   PROFILE + GOALS + DIARY
+========================= */
+function bindProfile(){
+  document.getElementById("pName").value = state.profile.name || "";
+  document.getElementById("pCourse").value = state.profile.course || "";
+  document.getElementById("pGoal").value = state.profile.goal || "";
+  document.getElementById("pRoutine").value = state.profile.routine || "";
+
+  document.getElementById("pName").addEventListener("input", ()=>{ state.profile.name=v("pName"); save(); });
+  document.getElementById("pCourse").addEventListener("input", ()=>{ state.profile.course=v("pCourse"); save(); });
+  document.getElementById("pGoal").addEventListener("input", ()=>{ state.profile.goal=v("pGoal"); save(); });
+  document.getElementById("pRoutine").addEventListener("input", ()=>{ state.profile.routine=v("pRoutine"); save(); });
+
+  document.getElementById("dailyGoal").value = state.goals.daily ?? 60;
+  document.getElementById("weeklyGoal").value = state.goals.weekly ?? 300;
+  document.getElementById("dailyGoal").addEventListener("input", ()=>{ state.goals.daily=Number(v("dailyGoal")||0); save(); renderDashboard(); });
+  document.getElementById("weeklyGoal").addEventListener("input", ()=>{ state.goals.weekly=Number(v("weeklyGoal")||0); save(); renderDashboard(); });
+
+  document.getElementById("diary").value = state.diary || "";
+  document.getElementById("diary").addEventListener("input", ()=>{ state.diary=v("diary"); save(); });
+
+  document.getElementById("btnDiaryToday").onclick=()=>{
+    const now=new Date();
+    const head=`\n\n[${now.toLocaleDateString("pt-BR")}]\n`;
+    const ta=document.getElementById("diary");
+    ta.value=(ta.value||"")+head;
+    state.diary=ta.value;
+    save();
+  };
+  document.getElementById("btnClearDiary").onclick=()=>{
+    if(confirm("Tem certeza que quer limpar o diário?")){
+      state.diary="";
+      document.getElementById("diary").value="";
+      save();
+    }
+  };
+}
+
+/* =========================
+   NOTIFICATIONS + SERVICE WORKER
+========================= */
+async function ensureSW(){
+  if(!("serviceWorker" in navigator)) return null;
+  try{ return await navigator.serviceWorker.register("./sw.js"); }
+  catch(e){ return null; }
+}
+async function requestNotif(){
+  if(!("Notification" in window)){ alert("Seu navegador não suporta notificações."); return false; }
+  const perm = await Notification.requestPermission();
+  state.notifEnabled = (perm==="granted");
+  save();
+  toast(state.notifEnabled ? "Notificações ativadas ✅" : "Permissão negada.");
+  return state.notifEnabled;
+}
+async function notify(title, body){
+  const reg = await ensureSW();
+  if(reg && state.notifEnabled && ("showNotification" in reg)){
+    try{
+      await reg.showNotification(title,{
+        body,
+        icon:"./icons/icon-192.png",
+        badge:"./icons/icon-192.png",
+        vibrate:[120,60,120],
+        tag:"planner-estudos",
+        data:{url:"./"}
+      });
+      return;
+    }catch(e){}
+  }
+  if(state.notifEnabled && ("Notification" in window)){
+    try{ new Notification(title,{body,icon:"./icons/icon-192.png"}); return; }catch(e){}
+  }
+  alert(title + "\n\n" + body);
+}
+function toast(msg){
+  const p=document.createElement("div");
+  p.style.position="fixed";
+  p.style.bottom="14px";
+  p.style.left="50%";
+  p.style.transform="translateX(-50%)";
+  p.style.padding="10px 12px";
+  p.style.border="1px solid rgba(255,255,255,.18)";
+  p.style.borderRadius="14px";
+  p.style.background="rgba(0,0,0,.45)";
+  p.style.backdropFilter="blur(8px)";
+  p.style.zIndex="9999";
+  p.innerText=msg;
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),2200);
+}
+
+/* =========================
+   ALARMS
+========================= */
+function uuid(){ return Math.random().toString(16).slice(2)+"-"+Date.now().toString(16); }
+
+function addAlarm(){
+  const title = v("alarmTitle").trim() || "Lembrete de estudos";
+  const whenVal = v("alarmWhen");
+  if(!whenVal){ alert("Escolha data e hora."); return; }
+  const when = new Date(whenVal);
+  if(isNaN(when.getTime())){ alert("Data/hora inválida."); return; }
+  state.alarms.push({ id:uuid(), title, whenISO: when.toISOString(), createdAt:new Date().toISOString() });
+  save();
+  renderAlarms();
+  toast("Alarme criado ✅");
+}
+function removeAlarm(id){
+  state.alarms = state.alarms.filter(a=>a.id!==id);
+  save(); renderAlarms();
+}
+async function fireAlarm(id, manual=false){
+  const a = state.alarms.find(x=>x.id===id);
+  if(!a) return;
+  await notify("⏰ Hora de estudar!", `Lembrete: ${a.title}`);
+  a.firedAt = new Date().toISOString();
+  save(); renderAlarms();
+  if(manual) toast("Notificação enviada ✅");
+}
+function renderAlarms(){
+  const el=document.getElementById("alarmsList");
+  el.innerHTML="";
+  const now=Date.now();
+  const sorted=[...state.alarms].sort((a,b)=>new Date(a.whenISO)-new Date(b.whenISO));
+  sorted.forEach(a=>{
+    const when=new Date(a.whenISO);
+    const fired=!!a.firedAt;
+    const isPast = when.getTime()<now && !fired;
+
+    const div=document.createElement("div");
+    div.className="item";
+    div.innerHTML=`
+      <div>
+        <b>${escapeHtml(a.title)}</b>
+        <div class="meta">${when.toLocaleString("pt-BR")} ${fired?"• disparado ✅":(isPast?"• atrasado ⚠️":"")}</div>
+      </div>
+      <div class="row" style="gap:8px; flex:0">
+        <button class="secondary" data-fire="${a.id}" title="Disparar agora">🔔</button>
+        <button class="danger" data-del="${a.id}" title="Excluir">🗑️</button>
+      </div>
+    `;
+    el.appendChild(div);
+  });
+  el.querySelectorAll("[data-del]").forEach(btn=> btn.onclick=()=>removeAlarm(btn.dataset.del));
+  el.querySelectorAll("[data-fire]").forEach(btn=> btn.onclick=()=>fireAlarm(btn.dataset.fire,true));
+}
+function alarmWatcher(){
+  setInterval(async ()=>{
+    const now=Date.now();
+    for(const a of state.alarms){
+      if(a.firedAt) continue;
+      const when=new Date(a.whenISO).getTime();
+      if(now>=when) await fireAlarm(a.id,false);
+    }
+  }, 20000);
+}
+
+/* =========================
+   POMODORO TIMER
+========================= */
+let tickHandle = null;
+
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const m = Math.floor(sec/60);
+  const s = sec%60;
+  return `${pad(m)}:${pad(s)}`;
+}
+function setTimeDisplay(sec){
+  document.getElementById("timeLeft").innerText = fmtTime(sec);
+}
+
+function pomoLoadUI(){
+  document.getElementById("nextTopic").value = state.pomo.topic || "";
+  document.getElementById("pomoMin").value = state.pomo.minutes ?? 25;
+  const left = getPomoLeftSeconds();
+  setTimeDisplay(left);
+}
+
+function getPomoLeftSeconds(){
+  if(state.pomo.running && state.pomo.endsAt){
+    const left = (new Date(state.pomo.endsAt).getTime() - Date.now())/1000;
+    return left;
+  }
+  if(state.pomo.pausedLeft != null) return state.pomo.pausedLeft;
+  return (Number(state.pomo.minutes||25) * 60);
+}
+
+function pomoStart(){
+  const topic = v("nextTopic").trim();
+  const min = Number(v("pomoMin")||25);
+
+  state.pomo.topic = topic;
+  state.pomo.minutes = min;
+
+  const left = getPomoLeftSeconds();
+  state.pomo.running = true;
+  state.pomo.pausedLeft = null;
+  state.pomo.endsAt = new Date(Date.now() + left*1000).toISOString();
+  save();
+  pomoTick();
+  toast("Pomodoro iniciado ✅");
+}
+
+function pomoPause(){
+  if(!state.pomo.running) return;
+  const left = getPomoLeftSeconds();
+  state.pomo.running = false;
+  state.pomo.endsAt = null;
+  state.pomo.pausedLeft = Math.max(0, Math.floor(left));
+  save();
+  pomoTick();
+  toast("Pausado ⏸");
+}
+
+function pomoReset(){
+  state.pomo.running = false;
+  state.pomo.endsAt = null;
+  state.pomo.pausedLeft = null;
+  save();
+  pomoTick();
+  toast("Reset ⟲");
+}
+
+async function pomoFinish(){
+  state.pomo.running = false;
+  state.pomo.endsAt = null;
+  state.pomo.pausedLeft = null;
+  save();
+  pomoTick();
+  await notify("✅ Pomodoro finalizado!", state.pomo.topic ? `Sessão: ${state.pomo.topic}` : "Hora de registrar seu estudo!");
+}
+
+function pomoTick(){
+  if(tickHandle) clearInterval(tickHandle);
+
+  const update = async ()=>{
+    const left = getPomoLeftSeconds();
+    setTimeDisplay(left);
+    if(state.pomo.running && left <= 0){
+      await pomoFinish();
+    }
+  };
+  update();
+  tickHandle = setInterval(update, 1000);
+}
+
+function setPomoMinutes(min){
+  document.getElementById("pomoMin").value = min;
+  state.pomo.minutes = min;
+  state.pomo.running = false;
+  state.pomo.endsAt = null;
+  state.pomo.pausedLeft = null;
+  save();
+  setTimeDisplay(min*60);
+}
+
+/* =========================
+   SHARE + BACKUP
+========================= */
+async function shareApp(){
+  const today = toYMD(new Date());
+  const e = state.days[today] || {};
+  const text =
+`Planner de Estudos — ${state.profile.name || "Meu"} 📚
+
+Dia: ${today}
+Tempo: ${e.minutes||0} min
+Prioridade: ${e.priority||"—"}
+Tópicos: ${e.topics||"—"}
+
+Versículo do dia: ${document.getElementById("verseRef").innerText}
+"${document.getElementById("verseText").innerText}"`;
+
+  if(navigator.share){
+    try{ await navigator.share({ title:"Planner de Estudos", text }); return; }catch(e){}
+  }
+  await navigator.clipboard.writeText(text);
+  toast("Texto copiado ✅ (cole no WhatsApp)");
+}
+function exportBackup(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `planner-estudos-backup-${toYMD(new Date())}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importBackup(){
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "application/json";
+  inp.onchange = async ()=>{
+    const file = inp.files?.[0];
+    if(!file) return;
+    const txt = await file.text();
+    try{
+      const obj = JSON.parse(txt);
+      Object.assign(state, obj);
+      save();
+      location.reload();
+    }catch(e){
+      alert("Backup inválido.");
+    }
+  };
+  inp.click();
+}
+
+/* =========================
+   INSTALL BUTTON
+========================= */
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt",(e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById("btnInstall");
+  btn.disabled = false;
+  btn.innerText = "📲 Instalar";
+});
+document.getElementById("btnInstall").addEventListener("click", async ()=>{
+  if(!deferredPrompt){
+    alert("Se não aparecer, use: Chrome ⋮ > Adicionar à tela inicial.");
+    return;
+  }
+  deferredPrompt.prompt();
+  const res = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById("btnInstall").disabled = true;
+  toast(res.outcome === "accepted" ? "Instalado ✅" : "Instalação cancelada");
+});
+
+/* =========================
+   WIRES
+========================= */
+document.getElementById("btnShare").onclick = shareApp;
+document.getElementById("btnExport").onclick = exportBackup;
+document.getElementById("btnImport").onclick = importBackup;
+
+document.getElementById("btnNotif").onclick = async ()=>{
+  await ensureSW();
+  await requestNotif();
+};
+
+document.getElementById("saveToday").onclick = saveToday;
+["studyMinutes","priority","topics","practice"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", ()=> saveToday());
+});
+document.getElementById("saveDay").onclick = saveDayFromCalendar;
+["calMinutes","hard","tomorrow"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", ()=> saveDayFromCalendar());
+});
+
+// mood + checks
+document.getElementById("moodRow").addEventListener("click",(e)=>{
+  const btn = e.target.closest(".moodBtn"); if(!btn) return;
+  document.querySelectorAll("#moodRow .moodBtn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  saveToday();
+});
+document.querySelectorAll("[data-check]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{ btn.classList.toggle("active"); saveToday(); });
+});
+
+// calendar nav
+document.getElementById("prevMonth").onclick=()=>{
+  state.ui.calMonth--;
+  if(state.ui.calMonth<0){ state.ui.calMonth=11; state.ui.calYear--; }
+  save(); renderCalendar();
+};
+document.getElementById("nextMonth").onclick=()=>{
+  state.ui.calMonth++;
+  if(state.ui.calMonth>11){ state.ui.calMonth=0; state.ui.calYear++; }
+  save(); renderCalendar();
+};
+
+// alarms
+document.getElementById("btnAddAlarm").onclick = async ()=>{
+  await ensureSW();
+  if(!state.notifEnabled) await requestNotif();
+  addAlarm();
+};
+document.getElementById("btnTestNotif").onclick = async ()=>{
+  await ensureSW();
+  if(!state.notifEnabled) await requestNotif();
+  await notify("🔔 Teste do Planner", "Notificação funcionando ✅");
+};
+
+// reset all
+document.getElementById("btnResetAll").onclick=()=>{
+  if(confirm("Tem certeza que deseja apagar TUDO?")){
+    localStorage.removeItem(LS_KEY);
+    location.reload();
+  }
+};
+
+// pomodoro buttons
+document.getElementById("btnStart").onclick = async ()=>{
+  await ensureSW();
+  if(!state.notifEnabled) await requestNotif();
+  pomoStart();
+};
+document.getElementById("btnPause").onclick = pomoPause;
+document.getElementById("btnReset").onclick = pomoReset;
+document.getElementById("btnShort").onclick = ()=> setPomoMinutes(5);
+document.getElementById("btnLong").onclick = ()=> setPomoMinutes(15);
+document.getElementById("pomoMin").addEventListener("input", ()=>{
+  if(state.pomo.running) return;
+  const min = Number(v("pomoMin")||25);
+  setTimeDisplay(min*60);
+  state.pomo.minutes = min;
+  save();
+});
+document.getElementById("nextTopic").addEventListener("input", ()=>{
+  state.pomo.topic = v("nextTopic");
+  save();
+});
+
+/* =========================
+   INIT
+========================= */
+(async function(){
+  load();
+  renderTodayLine();
+  renderVerse();
+  bindProfile();
+
+  initCalendar();
+  renderAlarms();
+  alarmWatcher();
+
+  await ensureSW();
+
+  // notif already granted?
+  if("Notification" in window && Notification.permission==="granted"){
+    state.notifEnabled = true;
+    save();
+  }
+
+  // set selected date to today at boot
+  state.ui.selectedDate = toYMD(new Date());
+  save();
+  selectDay(state.ui.selectedDate);
+
+  // init pomo
+  pomoLoadUI();
+  pomoTick();
+
+  // start on Hoje
+  setTab("hoje");
+})();
+</script>
+</body>
+</html>
