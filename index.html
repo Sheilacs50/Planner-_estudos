@@ -1537,9 +1537,7 @@ document.getElementById("btnAddCourse")?.addEventListener("click", ()=>{
 document.getElementById("btnAddExercise")?.addEventListener("click", ()=>{
   addToList("exercises", v("addExerciseText"));
   document.getElementById("addExerciseText").value="";
-});
-</script>
-function collectCourses(){
+});function collectCourses(){
   // pega cursos do perfil + cursos adicionados no dia
   const set = new Set();
   if(state.profile.course) set.add(state.profile.course.trim());
@@ -1613,5 +1611,6 @@ function renderGoalProgress(){
   if(pctEl) pctEl.innerText = pct + "%";
   if(txt) txt.innerText = weeklyGoal>0 ? `${weekSum} / ${weeklyGoal} min na semana` : `${weekSum} min na semana (defina sua meta semanal)`;
 }
+</script>
 </body>
 </html>
