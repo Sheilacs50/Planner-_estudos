@@ -1347,7 +1347,10 @@ function renderGoalProgress(){
   const pct = weeklyGoal > 0 ? Math.min(100, Math.round((weekSum/weeklyGoal)*100)) : 0;
   const bar = document.getElementById("progWeeklyBar");
   const pctEl = document.getElementById("progWeeklyPct");
-  const txt = document.getElementById("progWeeklyText");
+  const txt = document.getElementById("progWeeklyText");document.querySelectorAll("[data-wcheck]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{ btn.classList.toggle("active"); saveWeekly(); });
+});
+document.getElementById("weeklyTargetText")?.addEventListener("input", saveWeekly);
   if(bar) bar.style.width = pct + "%";
   if(pctEl) pctEl.innerText = pct + "%";
   if(txt) txt.innerText = weeklyGoal>0 ? `${weekSum} / ${weeklyGoal} min na semana` : `${weekSum} min na semana (defina sua meta semanal)`;
