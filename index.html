@@ -9,23 +9,13 @@
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
   <title>Planner de Estudos — Sheila (PWA)</title>
-.mLabel{
-  font-size:11px;
-  margin-left:6px;
-  color: var(--muted);
-  font-weight:800;
-}
-.moodBtn{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
+
   <style>
     :root{
       --bg:#0b2a66;
       --card:#123a8a;
       --text:#ffffff;
-     --muted: rgba(255,255,255,.82); 5,255,255,.82);
+      --muted:rgba(255,255,255,.82);
       --stroke:rgba(255,255,255,.18);
       --gold:#FFD700;
       --ok:#22c55e;
@@ -42,7 +32,6 @@
       color:var(--text);
     }
     .wrap{max-width:1300px; margin:0 auto; display:grid; gap:12px}
-
     header{
       display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
       padding:12px; border:1px solid var(--stroke); border-radius:var(--radius);
@@ -52,7 +41,6 @@
     .title h1{margin:0; font-size:18px}
     .title p{margin:4px 0 0; color:var(--muted); font-size:12px}
     .actions{display:flex; gap:8px; flex-wrap:wrap}
-
     button{
       border:1px solid var(--stroke);
       background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
@@ -73,7 +61,6 @@
       border-color: rgba(239,68,68,.4);
       background: linear-gradient(180deg, rgba(239,68,68,.25), rgba(239,68,68,.12));
     }
-
     .tabs{
       display:flex; gap:8px; flex-wrap:wrap;
       padding:10px;
@@ -89,8 +76,7 @@
       border-color: rgba(255,215,0,.35);
       box-shadow: 0 0 0 2px rgba(255,215,0,.12) inset;
     }
-
-a    .card{
+    .card{
       padding:14px;
       border:1px solid var(--stroke);
       border-radius:var(--radius);
@@ -116,21 +102,15 @@ a    .card{
       outline:none;
     }
     textarea{min-height:100px; resize:vertical}
-
     .grid2{display:grid; gap:12px; grid-template-columns: 1.1fr .9fr;}
     @media (max-width: 980px){ .grid2{grid-template-columns:1fr} }
-
-    /* Paisagem: no landscape, aproveita mais */
     @media (orientation: landscape) and (max-height: 520px){
       body{padding:8px}
       .tabs{top:0}
       textarea{min-height:72px}
       header{padding:10px}
     }
-
     .sep{height:1px; background: var(--stroke); margin:12px 0}
-
-    /* Mood + checklist */
     .moodRow{display:flex; gap:8px; flex-wrap:wrap}
     .moodBtn{
       padding:10px 12px;
@@ -138,13 +118,20 @@ a    .card{
       font-size:16px;
       border:1px solid var(--stroke);
       background: rgba(0,0,0,.14);
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .mLabel{
+      font-size:11px;
+      margin-left:6px;
+      color: var(--muted);
+      font-weight:800;
     }
     .moodBtn.active{
       outline:2px solid rgba(255,215,0,.35);
       background: rgba(255,215,0,.12);
     }
-
-    /* Calendar */
     .calHead{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
     .calGrid{margin-top:10px; display:grid; grid-template-columns: repeat(7, 1fr); gap:8px;}
     .dow{text-align:center; font-size:11px; color:var(--muted); padding:6px 0;}
@@ -163,7 +150,6 @@ a    .card{
     .today{outline:2px solid rgba(255,215,0,.35)}
     .dim{opacity:.45}
     .notesMini{margin-top:6px; font-size:11px; color:var(--muted); line-height:1.2; max-height:44px; overflow:hidden;}
-
     .item{
       border:1px solid var(--stroke);
       border-radius:14px;
@@ -181,19 +167,10 @@ a    .card{
       background: rgba(255,255,255,.08);
       white-space:nowrap;
     }
-
     .okText{color: rgba(34,197,94,.95); font-weight:800}
     .warnText{color: rgba(255,215,0,.95); font-weight:800}
-
     .hide{display:none}
-
-    /* Pomodoro */
-    .timerBox{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-      align-items:stretch;
-    }
+    .timerBox{display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:stretch;}
     @media (max-width: 700px){ .timerBox{grid-template-columns:1fr} }
     .bigTime{
       font-size:42px;
@@ -205,7 +182,6 @@ a    .card{
       border:1px solid var(--stroke);
       background: rgba(0,0,0,.16);
     }
-    .center{text-align:center}
   </style>
 </head>
 
@@ -273,38 +249,7 @@ a    .card{
 
         <div class="sep"></div>
 
-        <h2>📝 Registro rápido de hoje</h2><div class="sep"></div>
-
-<h2>📚 Itens do dia (com +)</h2>
-
-<div class="row">
-  <div class="card" style="background: rgba(0,0,0,.10)">
-    <h2>📌 Títulos / Aulas</h2>
-    <div class="row">
-      <input id="addTitleText" placeholder="Ex.: Aula 12 — Estatística" />
-      <button class="gold" id="btnAddTitle">＋</button>
-    </div>
-    <div id="titlesList" style="display:grid; gap:8px; margin-top:10px"></div>
-  </div>
-
-  <div class="card" style="background: rgba(0,0,0,.10)">
-    <h2>🎓 Curso / Matéria</h2>
-    <div class="row">
-      <input id="addCourseText" placeholder="Ex.: Power BI / Contábil / Inglês" />
-      <button class="gold" id="btnAddCourse">＋</button>
-    </div>
-    <div id="coursesList" style="display:grid; gap:8px; margin-top:10px"></div>
-  </div>
-</div>
-
-<div class="card" style="background: rgba(0,0,0,.10); margin-top:12px">
-  <h2>🧩 Exercícios / Questões</h2>
-  <div class="row">
-    <input id="addExerciseText" placeholder="Ex.: Lista 3 — 20 questões" />
-    <button class="gold" id="btnAddExercise">＋</button>
-  </div>
-  <div id="exList" style="display:grid; gap:8px; margin-top:10px"></div>
-</div>
+        <h2>📝 Registro rápido de hoje</h2>
         <div class="row">
           <div>
             <label>Tempo estudado hoje (min)</label>
@@ -330,7 +275,17 @@ a    .card{
         <div class="row" style="align-items:flex-end">
           <div>
             <label>🙂 Humor do dia</label>
-            <
+            <div class="moodRow" id="moodRow">
+              <button class="moodBtn" data-mood="Muito feliz" title="Muito feliz">😄<span class="mLabel">Muito feliz</span></button>
+              <button class="moodBtn" data-mood="Feliz" title="Feliz">🙂<span class="mLabel">Feliz</span></button>
+              <button class="moodBtn" data-mood="Motivada" title="Motivada">🔥<span class="mLabel">Motivada</span></button>
+              <button class="moodBtn" data-mood="Calma" title="Calma">😌<span class="mLabel">Calma</span></button>
+              <button class="moodBtn" data-mood="Neutra" title="Neutra">😐<span class="mLabel">Neutra</span></button>
+              <button class="moodBtn" data-mood="Cansada" title="Cansada">🥱<span class="mLabel">Cansada</span></button>
+              <button class="moodBtn" data-mood="Ansiosa" title="Ansiosa">😰<span class="mLabel">Ansiosa</span></button>
+              <button class="moodBtn" data-mood="Triste" title="Triste">😔<span class="mLabel">Triste</span></button>
+              <button class="moodBtn" data-mood="Sem foco" title="Sem foco">😵‍💫<span class="mLabel">Sem foco</span></button>
+              <button class="moodBtn" data-mood="Determinada" title="Determinada">💪<span class="mLabel">Determinada</span></button>
             </div>
           </div>
           <div style="min-width:240px">
@@ -338,6 +293,40 @@ a    .card{
             <div class="sub" id="saveHint">Salvando…</div>
           </div>
         </div>
+
+        <div class="sep"></div>
+
+        <h2>📚 Itens do dia (com +)</h2>
+
+        <div class="row">
+          <div class="card" style="background: rgba(0,0,0,.10)">
+            <h2>📌 Títulos / Aulas</h2>
+            <div class="row">
+              <input id="addTitleText" placeholder="Ex.: Aula 12 — Estatística" />
+              <button class="gold" id="btnAddTitle">＋</button>
+            </div>
+            <div id="titlesList" style="display:grid; gap:8px; margin-top:10px"></div>
+          </div>
+
+          <div class="card" style="background: rgba(0,0,0,.10)">
+            <h2>🎓 Curso / Matéria</h2>
+            <div class="row">
+              <input id="addCourseText" placeholder="Ex.: Power BI / Contábil / Inglês" />
+              <button class="gold" id="btnAddCourse">＋</button>
+            </div>
+            <div id="coursesList" style="display:grid; gap:8px; margin-top:10px"></div>
+          </div>
+        </div>
+
+        <div class="card" style="background: rgba(0,0,0,.10); margin-top:12px">
+          <h2>🧩 Exercícios / Questões</h2>
+          <div class="row">
+            <input id="addExerciseText" placeholder="Ex.: Lista 3 — 20 questões" />
+            <button class="gold" id="btnAddExercise">＋</button>
+          </div>
+          <div id="exList" style="display:grid; gap:8px; margin-top:10px"></div>
+        </div>
+
       </div>
 
       <div class="card" style="background: rgba(0,0,0,.10)">
@@ -366,54 +355,35 @@ a    .card{
 
         <div class="sep"></div>
 
-        <<h2>✅ Checklist do dia</h2>
-<div class="moodRow" id="dailyChecks">
-  <button class="moodBtn" data-check="rev">📌<span class="mLabel">Revisão</span></button>
-  <button class="moodBtn" data-check="ex">🧩<span class="mLabel">Exercícios</span></button>
-  <button class="moodBtn" data-check="proj">🛠️<span class="mLabel">Projeto</span></button>
-  <button class="moodBtn" data-check="anot">📝<span class="mLabel">Anotações</span></button>
-  <button class="moodBtn" data-check="desc">😴<span class="mLabel">Sono</span></button>
-</div>
+        <h2>✅ Checklist do dia</h2>
+        <div class="moodRow" id="dailyChecks">
+          <button class="moodBtn" data-check="rev">📌<span class="mLabel">Revisão</span></button>
+          <button class="moodBtn" data-check="ex">🧩<span class="mLabel">Exercícios</span></button>
+          <button class="moodBtn" data-check="proj">🛠️<span class="mLabel">Projeto</span></button>
+          <button class="moodBtn" data-check="anot">📝<span class="mLabel">Anotações</span></button>
+          <button class="moodBtn" data-check="desc">😴<span class="mLabel">Sono</span></button>
+        </div>
 
-<div class="sep"></div>
+        <div class="sep"></div>
 
-<h2>📆 Checklist semanal</h2>
-<div class="row">
-  <div>
-    <label>Objetivo semanal (ex.: 5 revisões)</label>
-    <input id="weeklyTargetText" placeholder="Ex.: 5 revisões + 3 listas de exercícios" />
-  </div>
-  <div>
-    <label>Concluído (marque)</label>
-    <div class="moodRow" id="weeklyChecks">
-      <button class="moodBtn" data-wcheck="wk_rev">📌<span class="mLabel">Revisão</span></button>
-      <button class="moodBtn" data-wcheck="wk_ex">🧩<span class="mLabel">Exercícios</span></button>
-      <button class="moodBtn" data-wcheck="wk_proj">🛠️<span class="mLabel">Projeto</span></button>
-      <button class="moodBtn" data-wcheck="wk_sim">🧪<span class="mLabel">Simulado</span></button>
-      <button class="moodBtn" data-wcheck="wk_res">📚<span class="mLabel">Resumo</span></button>
-    </div>
-  </div>
-</div>
-<div class="sub">O semanal é salvo por semana (Seg–Dom).</div>
-        <div class="moodRow">
-          <button class="moodBtn" data-check="rev" title="Revisão">📌</button>
-          <button class="moodBtn" data-check="ex" title="Exercícios">🧩</button>
-          <button class="moodBtn" data-check="proj" title="Projeto/Prática">🛠️</button>
-          <button class="moodBtn" data-check="anot" title="Anotações">📝</button>
-          <button class="moodBtn" data-check="desc" title="Descanso/sono">😴</button>
-  <div class="moodRow" id="moodRow">
-  <button class="moodBtn" data-mood="Muito feliz" title="Muito feliz">😄<span class="mLabel">Muito feliz</span></button>
-  <button class="moodBtn" data-mood="Feliz" title="Feliz">🙂<span class="mLabel">Feliz</span></button>
-  <button class="moodBtn" data-mood="Motivada" title="Motivada">🔥<span class="mLabel">Motivada</span></button>
-  <button class="moodBtn" data-mood="Calma" title="Calma">😌<span class="mLabel">Calma</span></button>
-  <button class="moodBtn" data-mood="Neutra" title="Neutra">😐<span class="mLabel">Neutra</span></button>
-  <button class="moodBtn" data-mood="Cansada" title="Cansada">🥱<span class="mLabel">Cansada</span></button>
-  <button class="moodBtn" data-mood="Ansiosa" title="Ansiosa">😰<span class="mLabel">Ansiosa</span></button>
-  <button class="moodBtn" data-mood="Triste" title="Triste">😔<span class="mLabel">Triste</span></button>
-  <button class="moodBtn" data-mood="Sem foco" title="Sem foco">😵‍💫<span class="mLabel">Sem foco</span></button>
-  <button class="moodBtn" data-mood="Determinada" title="Determinada">💪<span class="mLabel">Determinada</span></button>
-</div>      </div>
-        <div class="sub">Toque para marcar ✅ (fica salvo no dia)</div>
+        <h2>📆 Checklist semanal</h2>
+        <div class="row">
+          <div>
+            <label>Objetivo semanal</label>
+            <input id="weeklyTargetText" placeholder="Ex.: 5 revisões + 3 listas de exercícios" />
+          </div>
+          <div>
+            <label>Concluído</label>
+            <div class="moodRow" id="weeklyChecks">
+              <button class="moodBtn" data-wcheck="wk_rev">📌<span class="mLabel">Revisão</span></button>
+              <button class="moodBtn" data-wcheck="wk_ex">🧩<span class="mLabel">Exercícios</span></button>
+              <button class="moodBtn" data-wcheck="wk_proj">🛠️<span class="mLabel">Projeto</span></button>
+              <button class="moodBtn" data-wcheck="wk_sim">🧪<span class="mLabel">Simulado</span></button>
+              <button class="moodBtn" data-wcheck="wk_res">📚<span class="mLabel">Resumo</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="sub">O semanal é salvo por semana (Seg–Dom).</div>
       </div>
     </div>
   </section>
@@ -479,11 +449,7 @@ a    .card{
 
   <!-- ALARMES -->
   <section class="card hide" id="tab-alarmes">
-    <h2>⏰ Alarmes + Notificações</h2>try{
-  const a = document.getElementById("alarmSound");
-  if(a){ a.currentTime = 0; await a.play(); }
-  if(navigator.vibrate) navigator.vibrate([200, 80, 200, 80, 400]);
-}catch(e){}
+    <h2>⏰ Alarmes + Notificações</h2>
 
     <div class="row">
       <div>
@@ -499,9 +465,10 @@ a    .card{
     <div class="row">
       <button id="btnAddAlarm" class="gold">➕ Criar alarme</button>
       <button id="btnTestNotif" class="secondary">🔔 Testar notificação</button>
+      <button id="btnAddToCalendar" class="secondary">📅 Add na Agenda</button>
     </div>
 
-    <div class="sub">No Android, notificações funcionam melhor com o app instalado.</div>
+    <div class="sub">No Android, notificações do PWA podem falhar se o sistema “dormir” o app. A opção “Add na Agenda” é 100% confiável.</div>
 
     <div class="sep"></div>
     <div id="alarmsList" style="display:grid; gap:8px"></div>
@@ -544,60 +511,58 @@ a    .card{
           <div class="meta"><span id="dashMonthMin">0</span> min</div>
         </div>
         <div class="badge">Acumulado</div>
-<div class="sep"></div>
-<h2>🧭 Segmentação</h2>
-
-<div class="row">
-  <div>
-    <label>Filtrar por curso/matéria</label>
-    <select id="segCourse">
-      <option value="">Todos</option>
-    </select>
-  </div>
-  <div>
-    <label>Período</label>
-    <select id="segRange">
-      <option value="7">Últimos 7 dias</option>
-      <option value="30">Últimos 30 dias</option>
-      <option value="365">Ano</option>
-    </select>
-  </div>
-</div>
-
-<div class="row" style="margin-top:10px">
-  <div class="item">
-    <div>
-      <b>Minutos no filtro</b>
-      <div class="meta"><span id="segMinutes">0</span> min</div>
-    </div>
-    <div class="badge">Total</div>
-  </div>
-
-  <div class="item">
-    <div>
-      <b>Atividades (títulos + exercícios)</b>
-      <div class="meta"><span id="segActs">0</span> itens</div>
-    </div>
-    <div class="badge">Volume</div>
-  </div>
-</div>
-
-<div class="sep"></div>
-<h2>📈 Evolução das metas</h2>
-<div class="item">
-  <div>
-    <b>Progresso semanal</b>
-    <div class="meta" id="progWeeklyText">—</div>
-    <div style="height:10px;border:1px solid var(--stroke);border-radius:999px;overflow:hidden;margin-top:8px">
-      <div id="progWeeklyBar" style="height:100%;width:0%;background:rgba(255,215,0,.45)"></div>
-    </div>
-  </div>
-  <div class="badge" id="progWeeklyPct">0%</div>
-</div>
-renderSegOptions();
-segCompute();
-renderGoalProgress();
       </div>
+    </div>
+
+    <div class="sep"></div>
+    <h2>🧭 Segmentação</h2>
+
+    <div class="row">
+      <div>
+        <label>Filtrar por curso/matéria</label>
+        <select id="segCourse">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div>
+        <label>Período</label>
+        <select id="segRange">
+          <option value="7">Últimos 7 dias</option>
+          <option value="30">Últimos 30 dias</option>
+          <option value="365">Ano</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <div class="item">
+        <div>
+          <b>Minutos no filtro</b>
+          <div class="meta"><span id="segMinutes">0</span> min</div>
+        </div>
+        <div class="badge">Total</div>
+      </div>
+
+      <div class="item">
+        <div>
+          <b>Atividades (títulos + exercícios)</b>
+          <div class="meta"><span id="segActs">0</span> itens</div>
+        </div>
+        <div class="badge">Volume</div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+    <h2>📈 Evolução das metas</h2>
+    <div class="item">
+      <div style="width:100%">
+        <b>Progresso semanal</b>
+        <div class="meta" id="progWeeklyText">—</div>
+        <div style="height:10px;border:1px solid var(--stroke);border-radius:999px;overflow:hidden;margin-top:8px">
+          <div id="progWeeklyBar" style="height:100%;width:0%;background:rgba(255,215,0,.45)"></div>
+        </div>
+      </div>
+      <div class="badge" id="progWeeklyPct">0%</div>
     </div>
   </section>
 
@@ -613,7 +578,7 @@ renderGoalProgress();
       <div>
         <label>Curso / Área</label>
         <input id="pCourse" placeholder="Ex.: Data / Contábil / Concurso" />
-      </div>k
+      </div>
     </div>
 
     <div class="row">
@@ -634,7 +599,7 @@ renderGoalProgress();
 
   <footer class="card">
     <div class="sub">
-      ✅ Offline + salvar automático • 📲 Instalar como app • 🔔 Alarmes/Notificações • 🔗 Compartilhar  
+      ✅ Offline + salvar automático • 📲 Instalar como app • 🔔 Alarmes/Notificações • 🔗 Compartilhar
     </div>
   </footer>
 
@@ -644,13 +609,14 @@ renderGoalProgress();
 /* =========================
    STATE + STORAGE
 ========================= */
-const LS_KEY = "planner_estudos_tabs_v2";
+const LS_KEY = "planner_estudos_pack_v3";
 const state = {
   profile: { name: "Sheila", course: "", goal:"", routine:"" },
   goals: { daily: 60, weekly: 300 },
-  days: {},      // "YYYY-MM-DD": { minutes, priority, topics, practice, hard, tomorrow, mood, checks, updatedAt }
+  days: {},      // "YYYY-MM-DD": { minutes, priority, topics, practice, hard, tomorrow, mood, checks, updatedAt, lists }
   diary: "",
   alarms: [],    // [{id, title, whenISO, createdAt, firedAt?}]
+  weeks: {},     // { "YYYY-WW": { targetText, checks:{} } }
   ui: { calYear: 0, calMonth: 0, selectedDate: "" },
   notifEnabled: false,
   pomo: { topic:"", minutes:25, running:false, endsAt: null, pausedLeft: null }
@@ -662,6 +628,7 @@ function load(){
     if(raw){
       const obj = JSON.parse(raw);
       Object.assign(state, obj);
+      state.weeks = state.weeks || {};
     }
   }catch(e){}
 }
@@ -722,9 +689,9 @@ function renderTodayLine(){
 function renderVerse(){
   const now = new Date();
   const idx = dayOfYear(now) % VERSES.length;
-  const v = VERSES[idx];
-  document.getElementById("verseRef").innerText = v.ref;
-  document.getElementById("verseText").innerText = v.text;
+  const vv = VERSES[idx];
+  document.getElementById("verseRef").innerText = vv.ref;
+  document.getElementById("verseText").innerText = vv.text;
   document.getElementById("verseDayTag").innerText = toYMD(now);
 }
 
@@ -822,14 +789,12 @@ function selectDay(ymd){
   state.ui.selectedDate=ymd;
   document.getElementById("selectedDate").value=ymd;
 
-  const e=state.days[ymd] || { minutes:"", priority:"", topics:"", practice:"", hard:"", tomorrow:"", mood:"", checks:{} };
+  const e=state.days[ymd] || { minutes:0, priority:"", topics:"", practice:"", hard:"", tomorrow:"", mood:"", checks:{} };
 
-  // Calendar tab fields
   document.getElementById("calMinutes").value = e.minutes ?? 0;
   document.getElementById("hard").value = e.hard ?? "";
   document.getElementById("tomorrow").value = e.tomorrow ?? "";
 
-  // Today tab fields (espelha no dia de hoje)
   const today=toYMD(new Date());
   if(ymd===today){
     document.getElementById("studyMinutes").value = e.minutes ?? 0;
@@ -837,12 +802,10 @@ function selectDay(ymd){
     document.getElementById("topics").value = e.topics ?? "";
     document.getElementById("practice").value = e.practice ?? "";
 
-    // mood
     document.querySelectorAll("#moodRow .moodBtn").forEach(btn=>{
       btn.classList.toggle("active", btn.dataset.mood === (e.mood||""));
     });
 
-    // checks
     document.querySelectorAll("[data-check]").forEach(btn=>{
       const key=btn.dataset.check;
       btn.classList.toggle("active", !!(e.checks && e.checks[key]));
@@ -865,6 +828,62 @@ function saveDayFromCalendar(){
   };
   save();
   renderCalendar();
+  renderDashboard();
+}
+
+/* =========================
+   LISTS (+)
+========================= */
+function ensureDay(ymd){
+  state.days[ymd] = state.days[ymd] || {};
+  state.days[ymd].lists = state.days[ymd].lists || { titles:[], courses:[], exercises:[] };
+  return state.days[ymd];
+}
+function renderListsToday(){
+  const ymd = toYMD(new Date());
+  const day = ensureDay(ymd);
+  const L = day.lists;
+
+  const mk = (text) => `
+    <div class="item">
+      <div><b>${escapeHtml(text)}</b><div class="meta">${ymd}</div></div>
+      <button class="danger" data-del="1">🗑️</button>
+    </div>`;
+
+  const bindDeletes = (rootEl, arr)=>{
+    if(!rootEl) return;
+    [...rootEl.querySelectorAll(".item")].forEach((it,idx)=>{
+      const del = it.querySelector("[data-del]");
+      if(del) del.onclick = ()=>{ arr.splice(idx,1); save(); renderListsToday(); renderDashboard(); };
+    });
+  };
+
+  const titlesEl = document.getElementById("titlesList");
+  if(titlesEl){
+    titlesEl.innerHTML = (L.titles.length ? L.titles.map(t=>mk(t)).join("") : `<div class="sub">Nenhum item.</div>`);
+    bindDeletes(titlesEl, L.titles);
+  }
+
+  const coursesEl = document.getElementById("coursesList");
+  if(coursesEl){
+    coursesEl.innerHTML = (L.courses.length ? L.courses.map(t=>mk(t)).join("") : `<div class="sub">Nenhum item.</div>`);
+    bindDeletes(coursesEl, L.courses);
+  }
+
+  const exEl = document.getElementById("exList");
+  if(exEl){
+    exEl.innerHTML = (L.exercises.length ? L.exercises.map(t=>mk(t)).join("") : `<div class="sub">Nenhum exercício registrado.</div>`);
+    bindDeletes(exEl, L.exercises);
+  }
+}
+function addToList(kind, value){
+  const ymd = toYMD(new Date());
+  const day = ensureDay(ymd);
+  const txt = (value||"").trim();
+  if(!txt) return;
+  day.lists[kind].unshift(txt);
+  save();
+  renderListsToday();
   renderDashboard();
 }
 
@@ -894,7 +913,8 @@ function saveToday(){
     practice: document.getElementById("practice").value.trim(),
     mood,
     checks,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
+    lists: ensureDay(ymd).lists
   };
 
   save();
@@ -903,9 +923,114 @@ function saveToday(){
 }
 
 /* =========================
+   WEEKLY (Seg–Dom)
+========================= */
+function weekKey(dateObj){
+  const d = new Date(dateObj);
+  const start = startOfWeek(d);
+  const y = start.getFullYear();
+  const jan1 = new Date(y,0,1);
+  const week = Math.floor(((start - jan1)/86400000 + (jan1.getDay()+6)%7) / 7) + 1;
+  return `${y}-W${pad(week)}`;
+}
+function saveWeekly(){
+  const key = weekKey(new Date());
+  const prev = state.weeks[key] || { targetText:"", checks:{} };
+  const checks = {};
+  document.querySelectorAll("[data-wcheck]").forEach(btn=>{
+    checks[btn.dataset.wcheck] = btn.classList.contains("active");
+  });
+  state.weeks[key] = {
+    ...prev,
+    targetText: (document.getElementById("weeklyTargetText")?.value || "").trim(),
+    checks
+  };
+  save();
+  renderDashboard();
+}
+function loadWeeklyUI(){
+  const key = weekKey(new Date());
+  const w = state.weeks[key] || { targetText:"", checks:{} };
+  const input = document.getElementById("weeklyTargetText");
+  if(input) input.value = w.targetText || "";
+  document.querySelectorAll("[data-wcheck]").forEach(btn=>{
+    btn.classList.toggle("active", !!w.checks?.[btn.dataset.wcheck]);
+  });
+}
+
+/* =========================
    DASHBOARD
 ========================= */
 function minutesFor(ymd){ return Number(state.days[ymd]?.minutes || 0); }
+
+function collectCourses(){
+  const set = new Set();
+  if(state.profile.course) set.add(state.profile.course.trim());
+  const today = state.days[toYMD(new Date())];
+  const arr = today?.lists?.courses || [];
+  arr.forEach(c=> set.add(String(c).trim()));
+  return [...set].filter(Boolean);
+}
+function renderSegOptions(){
+  const sel = document.getElementById("segCourse");
+  if(!sel) return;
+  const cur = sel.value || "";
+  const courses = collectCourses();
+  sel.innerHTML = `<option value="">Todos</option>` + courses.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+  sel.value = cur;
+}
+function segCompute(){
+  const sel = document.getElementById("segCourse");
+  const range = Number(document.getElementById("segRange")?.value || 7);
+  const course = sel?.value || "";
+
+  const now = new Date();
+  const from = new Date(now);
+  from.setDate(from.getDate() - (range-1));
+  from.setHours(0,0,0,0);
+
+  let minutes = 0;
+  let acts = 0;
+
+  for(const ymd in state.days){
+    const d = parseYMD(ymd);
+    if(d < from || d > now) continue;
+
+    const day = state.days[ymd];
+    const lists = day.lists || { titles:[], courses:[], exercises:[] };
+
+    if(course){
+      const hit = (lists.courses || []).some(c => String(c).trim() === course);
+      if(!hit) continue;
+    }
+
+    minutes += Number(day.minutes || 0);
+    acts += (lists.titles?.length || 0) + (lists.exercises?.length || 0);
+  }
+
+  document.getElementById("segMinutes").innerText = minutes;
+  document.getElementById("segActs").innerText = acts;
+}
+function renderGoalProgress(){
+  const weeklyGoal = Number(state.goals.weekly || 0);
+  const now = new Date();
+  const start = startOfWeek(now);
+  let weekSum = 0;
+  for(let i=0;i<7;i++){
+    const d = new Date(start);
+    d.setDate(start.getDate()+i);
+    weekSum += minutesFor(toYMD(d));
+  }
+
+  const pct = weeklyGoal > 0 ? Math.min(100, Math.round((weekSum/weeklyGoal)*100)) : 0;
+  const bar = document.getElementById("progWeeklyBar");
+  const pctEl = document.getElementById("progWeeklyPct");
+  const txt = document.getElementById("progWeeklyText");
+  if(bar) bar.style.width = pct + "%";
+  if(pctEl) pctEl.innerText = pct + "%";
+  if(txt) txt.innerText = weeklyGoal>0 ? `${weekSum} / ${weeklyGoal} min na semana` : `${weekSum} min na semana (defina sua meta semanal)`;
+}
+
 function renderDashboard(){
   const now=new Date();
   const today=toYMD(now);
@@ -939,7 +1064,6 @@ function renderDashboard(){
   }
   document.getElementById("dashMonthMin").innerText=monthSum;
 
-  // streak
   let streak=0;
   let cursor=new Date(now);
   for(let i=0;i<366;i++){
@@ -948,6 +1072,10 @@ function renderDashboard(){
     else break;
   }
   document.getElementById("dashStreak").innerText=streak;
+
+  renderSegOptions();
+  segCompute();
+  renderGoalProgress();
 }
 
 /* =========================
@@ -959,8 +1087,8 @@ function bindProfile(){
   document.getElementById("pGoal").value = state.profile.goal || "";
   document.getElementById("pRoutine").value = state.profile.routine || "";
 
-  document.getElementById("pName").addEventListener("input", ()=>{ state.profile.name=v("pName"); save(); });
-  document.getElementById("pCourse").addEventListener("input", ()=>{ state.profile.course=v("pCourse"); save(); });
+  document.getElementById("pName").addEventListener("input", ()=>{ state.profile.name=v("pName"); save(); renderDashboard(); });
+  document.getElementById("pCourse").addEventListener("input", ()=>{ state.profile.course=v("pCourse"); save(); renderDashboard(); });
   document.getElementById("pGoal").addEventListener("input", ()=>{ state.profile.goal=v("pGoal"); save(); });
   document.getElementById("pRoutine").addEventListener("input", ()=>{ state.profile.routine=v("pRoutine"); save(); });
 
@@ -1065,6 +1193,17 @@ function removeAlarm(id){
 async function fireAlarm(id, manual=false){
   const a = state.alarms.find(x=>x.id===id);
   if(!a) return;
+
+  // sound + vibration
+  try{
+    const snd = document.getElementById("alarmSound");
+    if(snd){
+      snd.currentTime = 0;
+      await snd.play();
+    }
+    if(navigator.vibrate) navigator.vibrate([200,80,200,80,400]);
+  }catch(e){}
+
   await notify("⏰ Hora de estudar!", `Lembrete: ${a.title}`);
   a.firedAt = new Date().toISOString();
   save(); renderAlarms();
@@ -1108,6 +1247,21 @@ function alarmWatcher(){
   }, 20000);
 }
 
+// Add to Calendar (Google Calendar URL)
+function addToGoogleCalendar(){
+  const title = encodeURIComponent(v("alarmTitle").trim() || "Estudos");
+  const whenVal = v("alarmWhen");
+  if(!whenVal){ alert("Escolha data e hora."); return; }
+  const start = new Date(whenVal);
+  const end = new Date(start.getTime() + 60*60*1000);
+  const fmt = (d)=>{
+    const iso = d.toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+    return iso;
+  };
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${fmt(start)}/${fmt(end)}&details=${encodeURIComponent("Lembrete criado no Planner de Estudos")}`;
+  window.open(url, "_blank");
+}
+
 /* =========================
    POMODORO TIMER
 ========================= */
@@ -1123,13 +1277,6 @@ function setTimeDisplay(sec){
   document.getElementById("timeLeft").innerText = fmtTime(sec);
 }
 
-function pomoLoadUI(){
-  document.getElementById("nextTopic").value = state.pomo.topic || "";
-  document.getElementById("pomoMin").value = state.pomo.minutes ?? 25;
-  const left = getPomoLeftSeconds();
-  setTimeDisplay(left);
-}
-
 function getPomoLeftSeconds(){
   if(state.pomo.running && state.pomo.endsAt){
     const left = (new Date(state.pomo.endsAt).getTime() - Date.now())/1000;
@@ -1137,6 +1284,12 @@ function getPomoLeftSeconds(){
   }
   if(state.pomo.pausedLeft != null) return state.pomo.pausedLeft;
   return (Number(state.pomo.minutes||25) * 60);
+}
+
+function pomoLoadUI(){
+  document.getElementById("nextTopic").value = state.pomo.topic || "";
+  document.getElementById("pomoMin").value = state.pomo.minutes ?? 25;
+  setTimeDisplay(getPomoLeftSeconds());
 }
 
 function pomoStart(){
@@ -1250,6 +1403,7 @@ function importBackup(){
     try{
       const obj = JSON.parse(txt);
       Object.assign(state, obj);
+      state.weeks = state.weeks || {};
       save();
       location.reload();
     }catch(e){
@@ -1314,6 +1468,12 @@ document.querySelectorAll("[data-check]").forEach(btn=>{
   btn.addEventListener("click", ()=>{ btn.classList.toggle("active"); saveToday(); });
 });
 
+// weekly checks
+document.querySelectorAll("[data-wcheck]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{ btn.classList.toggle("active"); saveWeekly(); });
+});
+document.getElementById("weeklyTargetText")?.addEventListener("input", saveWeekly);
+
 // calendar nav
 document.getElementById("prevMonth").onclick=()=>{
   state.ui.calMonth--;
@@ -1337,6 +1497,7 @@ document.getElementById("btnTestNotif").onclick = async ()=>{
   if(!state.notifEnabled) await requestNotif();
   await notify("🔔 Teste do Planner", "Notificação funcionando ✅");
 };
+document.getElementById("btnAddToCalendar").onclick = addToGoogleCalendar;
 
 // reset all
 document.getElementById("btnResetAll").onclick=()=>{
@@ -1346,7 +1507,25 @@ document.getElementById("btnResetAll").onclick=()=>{
   }
 };
 
-// pomodoro buttons
+// lists (+)
+document.getElementById("btnAddTitle")?.addEventListener("click", ()=>{
+  addToList("titles", v("addTitleText"));
+  document.getElementById("addTitleText").value="";
+});
+document.getElementById("btnAddCourse")?.addEventListener("click", ()=>{
+  addToList("courses", v("addCourseText"));
+  document.getElementById("addCourseText").value="";
+});
+document.getElementById("btnAddExercise")?.addEventListener("click", ()=>{
+  addToList("exercises", v("addExerciseText"));
+  document.getElementById("addExerciseText").value="";
+});
+
+// segmentation
+document.getElementById("segCourse")?.addEventListener("change", segCompute);
+document.getElementById("segRange")?.addEventListener("change", segCompute);
+
+// pomodoro
 document.getElementById("btnStart").onclick = async ()=>{
   await ensureSW();
   if(!state.notifEnabled) await requestNotif();
@@ -1366,83 +1545,7 @@ document.getElementById("pomoMin").addEventListener("input", ()=>{
 document.getElementById("nextTopic").addEventListener("input", ()=>{
   state.pomo.topic = v("nextTopic");
   save();
-});function collectCourses(){
-  // pega cursos do perfil + cursos adicionados no dia
-  const set = new Set();
-  if(state.profile.course) set.add(state.profile.course.trim());
-  const today = state.days[toYMD(new Date())];
-  const arr = today?.lists?.courses || [];
-  arr.forEach(c=> set.add(String(c).trim()));
-  return [...set].filter(Boolean);
-}
-
-function renderSegOptions(){
-  const sel = document.getElementById("segCourse");
-  if(!sel) return;
-  const cur = sel.value || "";
-  const courses = collectCourses();
-  sel.innerHTML = `<option value="">Todos</option>` + courses.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
-  sel.value = cur;
-}
-
-function segCompute(){
-  const sel = document.getElementById("segCourse");
-  const range = Number(document.getElementById("segRange")?.value || 7);
-  const course = sel?.value || "";
-
-  const now = new Date();
-  const from = new Date(now);
-  from.setDate(from.getDate() - (range-1));
-  from.setHours(0,0,0,0);
-
-  let minutes = 0;
-  let acts = 0;
-
-  // conta minutos e itens em dias no período
-  for(const ymd in state.days){
-    const d = parseYMD(ymd);
-    if(d < from || d > now) continue;
-
-    const day = state.days[ymd];
-    minutes += Number(day.minutes || 0);
-
-    const lists = day.lists || { titles:[], courses:[], exercises:[] };
-
-    // se filtrou por curso, só conta se esse curso aparece no dia
-    if(course){
-      const hit = (lists.courses || []).some(c => String(c).trim() === course);
-      if(!hit) continue;
-    }
-
-    acts += (lists.titles?.length || 0) + (lists.exercises?.length || 0);
-  }
-
-  document.getElementById("segMinutes").innerText = minutes;
-  document.getElementById("segActs").innerText = acts;
-}
-
-function renderGoalProgress(){
-  const weeklyGoal = Number(state.goals.weekly || 0);
-  const now = new Date();
-  const start = startOfWeek(now);
-  let weekSum = 0;
-  for(let i=0;i<7;i++){
-    const d = new Date(start);
-    d.setDate(start.getDate()+i);
-    weekSum += minutesFor(toYMD(d));
-  }
-
-  const pct = weeklyGoal > 0 ? Math.min(100, Math.round((weekSum/weeklyGoal)*100)) : 0;
-  const bar = document.getElementById("progWeeklyBar");
-  const pctEl = document.getElementById("progWeeklyPct");
-  const txt = document.getElementById("progWeeklyText");document.querySelectorAll("[data-wcheck]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{ btn.classList.toggle("active"); saveWeekly(); });
 });
-document.getElementById("weeklyTargetText")?.addEventListener("input", saveWeekly);
-  if(bar) bar.style.width = pct + "%";
-  if(pctEl) pctEl.innerText = pct + "%";
-  if(txt) txt.innerText = weeklyGoal>0 ? `${weekSum} / ${weeklyGoal} min na semana` : `${weekSum} min na semana (defina sua meta semanal)`;
-}
 
 /* =========================
    INIT
@@ -1452,176 +1555,35 @@ document.getElementById("weeklyTargetText")?.addEventListener("input", saveWeekl
   renderTodayLine();
   renderVerse();
   bindProfile();
-loadWeeklyUI();
+
   initCalendar();
   renderAlarms();
   alarmWatcher();
-renderListsToday();
   await ensureSW();
 
-  // notif already granted?
   if("Notification" in window && Notification.permission==="granted"){
     state.notifEnabled = true;
     save();
   }
 
-  // set selected date to today at boot
   state.ui.selectedDate = toYMD(new Date());
   save();
   selectDay(state.ui.selectedDate);
 
-  // init pomo
+  loadWeeklyUI();
+  renderListsToday();
+
   pomoLoadUI();
   pomoTick();
 
-  // start on Hoje
-  setTab("hoje");
-})();function ensureDay(ymd){
-  state.days[ymd] = state.days[ymd] || {};
-  state.days[ymd].lists = state.days[ymd].lists || { titles:[], courses:[], exercises:[] };
-  return state.days[ymd];
-}
-
-function renderListsToday(){
-  const ymd = toYMD(new Date());
-  const day = ensureDay(ymd);
-  const L = day.lists;
-
-  const mk = (text, onDel) => `
-    <div class="item">
-      <div><b>${escapeHtml(text)}</b><div class="meta">${ymd}</div></div>
-      <button class="danger" data-del="1">🗑️</button>
-    </div>`;
-
-  const titlesEl = document.getElementById("titlesList");
-  if(titlesEl){
-    titlesEl.innerHTML = L.titles.map((t,i)=>mk(t)).join("") || `<div class="sub">Nenhum item.</div>`;
-    [...titlesEl.querySelectorAll(".item")].forEach((it,idx)=>{
-      it.querySelector("[data-del]").onclick = ()=>{
-        L.titles.splice(idx,1); save(); renderListsToday();
-      };
-    });
-  }
-
-  const coursesEl = document.getElementById("coursesList");
-  if(coursesEl){
-    coursesEl.innerHTML = L.courses.map((t)=>mk(t)).join("") || `<div class="sub">Nenhum item.</div>`;
-    [...coursesEl.querySelectorAll(".item")].forEach((it,idx)=>{
-      it.querySelector("[data-del]").onclick = ()=>{
-        L.courses.splice(idx,1); save(); renderListsToday(); renderDashboard();
-      };
-    });
-  }
-
-  const exEl = document.getElementById("exList");
-  if(exEl){
-    exEl.innerHTML = L.exercises.map((t)=>mk(t)).join("") || `<div class="sub">Nenhum exercício registrado.</div>`;
-    [...exEl.querySelectorAll(".item")].forEach((it,idx)=>{
-      it.querySelector("[data-del]").onclick = ()=>{
-        L.exercises.splice(idx,1); save(); renderListsToday();
-      };
-    });
-  }
-}
-
-function addToList(kind, value){
-  const ymd = toYMD(new Date());
-  const day = ensureDay(ymd);
-  const txt = (value||"").trim();
-  if(!txt) return;
-  day.lists[kind].unshift(txt);
-  save();
-  renderListsToday();
   renderDashboard();
-}document.getElementById("btnAddTitle")?.addEventListener("click", ()=>{
-  addToList("titles", v("addTitleText"));
-  document.getElementById("addTitleText").value="";
-});
-document.getElementById("btnAddCourse")?.addEventListener("click", ()=>{
-  addToList("courses", v("addCourseText"));
-  document.getElementById("addCourseText").value="";
-});
-document.getElementById("btnAddExercise")?.addEventListener("click", ()=>{
-  addToList("exercises", v("addExerciseText"));
-  document.getElementById("addExerciseText").value="";
-});function collectCourses(){
-  // pega cursos do perfil + cursos adicionados no dia
-  const set = new Set();
-  if(state.profile.course) set.add(state.profile.course.trim());
-  const today = state.days[toYMD(new Date())];
-  const arr = today?.lists?.courses || [];
-  arr.forEach(c=> set.add(String(c).trim()));
-  return [...set].filter(Boolean);
-}
-
-function renderSegOptions(){
-  const sel = document.getElementById("segCourse");
-  if(!sel) return;
-  const cur = sel.value || "";
-  const courses = collectCourses();
-  sel.innerHTML = `<option value="">Todos</option>` + courses.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
-  sel.value = cur;
-}
-
-function segCompute(){
-  const sel = document.getElementById("segCourse");
-  const range = Number(document.getElementById("segRange")?.value || 7);
-  const course = sel?.value || "";
-
-  const now = new Date();
-  const from = new Date(now);
-  from.setDate(from.getDate() - (range-1));
-  from.setHours(0,0,0,0);
-
-  let minutes = 0;
-  let acts = 0;
-
-  // conta minutos e itens em dias no período
-  for(const ymd in state.days){
-    const d = parseYMD(ymd);
-    if(d < from || d > now) continue;
-
-    const day = state.days[ymd];
-    minutes += Number(day.minutes || 0);
-
-    const lists = day.lists || { titles:[], courses:[], exercises:[] };
-
-    // se filtrou por curso, só conta se esse curso aparece no dia
-    if(course){
-      const hit = (lists.courses || []).some(c => String(c).trim() === course);
-      if(!hit) continue;
-    }
-
-    acts += (lists.titles?.length || 0) + (lists.exercises?.length || 0);
-  }
-
-  document.getElementById("segMinutes").innerText = minutes;
-  document.getElementById("segActs").innerText = acts;
-}
-
-function renderGoalProgress(){
-  const weeklyGoal = Number(state.goals.weekly || 0);
-  const now = new Date();
-  const start = startOfWeek(now);
-  let weekSum = 0;
-  for(let i=0;i<7;i++){
-    const d = new Date(start);
-    d.setDate(start.getDate()+i);
-    weekSum += minutesFor(toYMD(d));
-  }
-
-  const pct = weeklyGoal > 0 ? Math.min(100, Math.round((weekSum/weeklyGoal)*100)) : 0;
-  const bar = document.getElementById("progWeeklyBar");
-  const pctEl = document.getElementById("progWeeklyPct");
-  const txt = document.getElementById("progWeeklyText");
-  if(bar) bar.style.width = pct + "%";
-  if(pctEl) pctEl.innerText = pct + "%";
-  if(txt) txt.innerText = weeklyGoal>0 ? `${weekSum} / ${weeklyGoal} min na semana` : `${weekSum} min na semana (defina sua meta semanal)`;
-}document.getElementById("segCourse")?.addEventListener("change", segCompute);
-document.getElementById("segRange")?.addEventListener("change", segCompute);
+  setTab("hoje");
+})();
 </script>
+
 <audio id="alarmSound" preload="auto">
   <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
 </audio>
+
 </body>
 </html>

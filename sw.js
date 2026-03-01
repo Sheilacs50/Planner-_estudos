@@ -1,4 +1,4 @@
-const CACHE = "planner-estudos-tabs-v2";
+const CACHE = "planner-estudos-pack-v3";
 const ASSETS = [
   "./",
   "./index.html",
