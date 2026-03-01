@@ -1278,7 +1278,80 @@ document.getElementById("pomoMin").addEventListener("input", ()=>{
 document.getElementById("nextTopic").addEventListener("input", ()=>{
   state.pomo.topic = v("nextTopic");
   save();
-});
+});function collectCourses(){
+  // pega cursos do perfil + cursos adicionados no dia
+  const set = new Set();
+  if(state.profile.course) set.add(state.profile.course.trim());
+  const today = state.days[toYMD(new Date())];
+  const arr = today?.lists?.courses || [];
+  arr.forEach(c=> set.add(String(c).trim()));
+  return [...set].filter(Boolean);
+}
+
+function renderSegOptions(){
+  const sel = document.getElementById("segCourse");
+  if(!sel) return;
+  const cur = sel.value || "";
+  const courses = collectCourses();
+  sel.innerHTML = `<option value="">Todos</option>` + courses.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+  sel.value = cur;
+}
+
+function segCompute(){
+  const sel = document.getElementById("segCourse");
+  const range = Number(document.getElementById("segRange")?.value || 7);
+  const course = sel?.value || "";
+
+  const now = new Date();
+  const from = new Date(now);
+  from.setDate(from.getDate() - (range-1));
+  from.setHours(0,0,0,0);
+
+  let minutes = 0;
+  let acts = 0;
+
+  // conta minutos e itens em dias no período
+  for(const ymd in state.days){
+    const d = parseYMD(ymd);
+    if(d < from || d > now) continue;
+
+    const day = state.days[ymd];
+    minutes += Number(day.minutes || 0);
+
+    const lists = day.lists || { titles:[], courses:[], exercises:[] };
+
+    // se filtrou por curso, só conta se esse curso aparece no dia
+    if(course){
+      const hit = (lists.courses || []).some(c => String(c).trim() === course);
+      if(!hit) continue;
+    }
+
+    acts += (lists.titles?.length || 0) + (lists.exercises?.length || 0);
+  }
+
+  document.getElementById("segMinutes").innerText = minutes;
+  document.getElementById("segActs").innerText = acts;
+}
+
+function renderGoalProgress(){
+  const weeklyGoal = Number(state.goals.weekly || 0);
+  const now = new Date();
+  const start = startOfWeek(now);
+  let weekSum = 0;
+  for(let i=0;i<7;i++){
+    const d = new Date(start);
+    d.setDate(start.getDate()+i);
+    weekSum += minutesFor(toYMD(d));
+  }
+
+  const pct = weeklyGoal > 0 ? Math.min(100, Math.round((weekSum/weeklyGoal)*100)) : 0;
+  const bar = document.getElementById("progWeeklyBar");
+  const pctEl = document.getElementById("progWeeklyPct");
+  const txt = document.getElementById("progWeeklyText");
+  if(bar) bar.style.width = pct + "%";
+  if(pctEl) pctEl.innerText = pct + "%";
+  if(txt) txt.innerText = weeklyGoal>0 ? `${weekSum} / ${weeklyGoal} min na semana` : `${weekSum} min na semana (defina sua meta semanal)`;
+}
 
 /* =========================
    INIT
