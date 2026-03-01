@@ -1476,7 +1476,18 @@ function addToList(kind, value){
   save();
   renderListsToday();
   renderDashboard();
-}
+}document.getElementById("btnAddTitle")?.addEventListener("click", ()=>{
+  addToList("titles", v("addTitleText"));
+  document.getElementById("addTitleText").value="";
+});
+document.getElementById("btnAddCourse")?.addEventListener("click", ()=>{
+  addToList("courses", v("addCourseText"));
+  document.getElementById("addCourseText").value="";
+});
+document.getElementById("btnAddExercise")?.addEventListener("click", ()=>{
+  addToList("exercises", v("addExerciseText"));
+  document.getElementById("addExerciseText").value="";
+});
 </script>
 </body>
 </html>
