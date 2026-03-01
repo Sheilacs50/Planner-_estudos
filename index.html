@@ -335,7 +335,35 @@
 
         <div class="sep"></div>
 
-        <h2>✅ Checklist do dia</h2>
+        <<h2>✅ Checklist do dia</h2>
+<div class="moodRow" id="dailyChecks">
+  <button class="moodBtn" data-check="rev">📌<span class="mLabel">Revisão</span></button>
+  <button class="moodBtn" data-check="ex">🧩<span class="mLabel">Exercícios</span></button>
+  <button class="moodBtn" data-check="proj">🛠️<span class="mLabel">Projeto</span></button>
+  <button class="moodBtn" data-check="anot">📝<span class="mLabel">Anotações</span></button>
+  <button class="moodBtn" data-check="desc">😴<span class="mLabel">Sono</span></button>
+</div>
+
+<div class="sep"></div>
+
+<h2>📆 Checklist semanal</h2>
+<div class="row">
+  <div>
+    <label>Objetivo semanal (ex.: 5 revisões)</label>
+    <input id="weeklyTargetText" placeholder="Ex.: 5 revisões + 3 listas de exercícios" />
+  </div>
+  <div>
+    <label>Concluído (marque)</label>
+    <div class="moodRow" id="weeklyChecks">
+      <button class="moodBtn" data-wcheck="wk_rev">📌<span class="mLabel">Revisão</span></button>
+      <button class="moodBtn" data-wcheck="wk_ex">🧩<span class="mLabel">Exercícios</span></button>
+      <button class="moodBtn" data-wcheck="wk_proj">🛠️<span class="mLabel">Projeto</span></button>
+      <button class="moodBtn" data-wcheck="wk_sim">🧪<span class="mLabel">Simulado</span></button>
+      <button class="moodBtn" data-wcheck="wk_res">📚<span class="mLabel">Resumo</span></button>
+    </div>
+  </div>
+</div>
+<div class="sub">O semanal é salvo por semana (Seg–Dom).</div>
         <div class="moodRow">
           <button class="moodBtn" data-check="rev" title="Revisão">📌</button>
           <button class="moodBtn" data-check="ex" title="Exercícios">🧩</button>
