@@ -273,7 +273,38 @@
 
         <div class="sep"></div>
 
-        <h2>📝 Registro rápido de hoje</h2>
+        <h2>📝 Registro rápido de hoje</h2><div class="sep"></div>
+
+<h2>📚 Itens do dia (com +)</h2>
+
+<div class="row">
+  <div class="card" style="background: rgba(0,0,0,.10)">
+    <h2>📌 Títulos / Aulas</h2>
+    <div class="row">
+      <input id="addTitleText" placeholder="Ex.: Aula 12 — Estatística" />
+      <button class="gold" id="btnAddTitle">＋</button>
+    </div>
+    <div id="titlesList" style="display:grid; gap:8px; margin-top:10px"></div>
+  </div>
+
+  <div class="card" style="background: rgba(0,0,0,.10)">
+    <h2>🎓 Curso / Matéria</h2>
+    <div class="row">
+      <input id="addCourseText" placeholder="Ex.: Power BI / Contábil / Inglês" />
+      <button class="gold" id="btnAddCourse">＋</button>
+    </div>
+    <div id="coursesList" style="display:grid; gap:8px; margin-top:10px"></div>
+  </div>
+</div>
+
+<div class="card" style="background: rgba(0,0,0,.10); margin-top:12px">
+  <h2>🧩 Exercícios / Questões</h2>
+  <div class="row">
+    <input id="addExerciseText" placeholder="Ex.: Lista 3 — 20 questões" />
+    <button class="gold" id="btnAddExercise">＋</button>
+  </div>
+  <div id="exList" style="display:grid; gap:8px; margin-top:10px"></div>
+</div>
         <div class="row">
           <div>
             <label>Tempo estudado hoje (min)</label>
