@@ -1419,7 +1419,64 @@ loadWeeklyUI();
 
   // start on Hoje
   setTab("hoje");
-})();
+})();function ensureDay(ymd){
+  state.days[ymd] = state.days[ymd] || {};
+  state.days[ymd].lists = state.days[ymd].lists || { titles:[], courses:[], exercises:[] };
+  return state.days[ymd];
+}
+
+function renderListsToday(){
+  const ymd = toYMD(new Date());
+  const day = ensureDay(ymd);
+  const L = day.lists;
+
+  const mk = (text, onDel) => `
+    <div class="item">
+      <div><b>${escapeHtml(text)}</b><div class="meta">${ymd}</div></div>
+      <button class="danger" data-del="1">🗑️</button>
+    </div>`;
+
+  const titlesEl = document.getElementById("titlesList");
+  if(titlesEl){
+    titlesEl.innerHTML = L.titles.map((t,i)=>mk(t)).join("") || `<div class="sub">Nenhum item.</div>`;
+    [...titlesEl.querySelectorAll(".item")].forEach((it,idx)=>{
+      it.querySelector("[data-del]").onclick = ()=>{
+        L.titles.splice(idx,1); save(); renderListsToday();
+      };
+    });
+  }
+
+  const coursesEl = document.getElementById("coursesList");
+  if(coursesEl){
+    coursesEl.innerHTML = L.courses.map((t)=>mk(t)).join("") || `<div class="sub">Nenhum item.</div>`;
+    [...coursesEl.querySelectorAll(".item")].forEach((it,idx)=>{
+      it.querySelector("[data-del]").onclick = ()=>{
+        L.courses.splice(idx,1); save(); renderListsToday(); renderDashboard();
+      };
+    });
+  }
+
+  const exEl = document.getElementById("exList");
+  if(exEl){
+    exEl.innerHTML = L.exercises.map((t)=>mk(t)).join("") || `<div class="sub">Nenhum exercício registrado.</div>`;
+    [...exEl.querySelectorAll(".item")].forEach((it,idx)=>{
+      it.querySelector("[data-del]").onclick = ()=>{
+        L.exercises.splice(idx,1); save(); renderListsToday();
+      };
+    });
+  }
+}
+
+function addToList(kind, value){
+  const ymd = toYMD(new Date());
+  const day = ensureDay(ymd);
+  const txt = (value||"").trim();
+  if(!txt) return;
+  day.lists[kind].unshift(txt);
+  save();
+  renderListsToday();
+  renderDashboard();
+}
 </script>
 </body>
 </html>
