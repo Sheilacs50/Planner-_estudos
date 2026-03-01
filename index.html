@@ -1610,7 +1610,8 @@ function renderGoalProgress(){
   if(bar) bar.style.width = pct + "%";
   if(pctEl) pctEl.innerText = pct + "%";
   if(txt) txt.innerText = weeklyGoal>0 ? `${weekSum} / ${weeklyGoal} min na semana` : `${weekSum} min na semana (defina sua meta semanal)`;
-}
+}document.getElementById("segCourse")?.addEventListener("change", segCompute);
+document.getElementById("segRange")?.addEventListener("change", segCompute);
 </script>
 </body>
 </html>
