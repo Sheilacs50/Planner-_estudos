@@ -90,7 +90,7 @@
       box-shadow: 0 0 0 2px rgba(255,215,0,.12) inset;
     }
 
-    .card{
+a    .card{
       padding:14px;
       border:1px solid var(--stroke);
       border-radius:var(--radius);
@@ -540,6 +540,56 @@
           <div class="meta"><span id="dashMonthMin">0</span> min</div>
         </div>
         <div class="badge">Acumulado</div>
+<div class="sep"></div>
+<h2>🧭 Segmentação</h2>
+
+<div class="row">
+  <div>
+    <label>Filtrar por curso/matéria</label>
+    <select id="segCourse">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div>
+    <label>Período</label>
+    <select id="segRange">
+      <option value="7">Últimos 7 dias</option>
+      <option value="30">Últimos 30 dias</option>
+      <option value="365">Ano</option>
+    </select>
+  </div>
+</div>
+
+<div class="row" style="margin-top:10px">
+  <div class="item">
+    <div>
+      <b>Minutos no filtro</b>
+      <div class="meta"><span id="segMinutes">0</span> min</div>
+    </div>
+    <div class="badge">Total</div>
+  </div>
+
+  <div class="item">
+    <div>
+      <b>Atividades (títulos + exercícios)</b>
+      <div class="meta"><span id="segActs">0</span> itens</div>
+    </div>
+    <div class="badge">Volume</div>
+  </div>
+</div>
+
+<div class="sep"></div>
+<h2>📈 Evolução das metas</h2>
+<div class="item">
+  <div>
+    <b>Progresso semanal</b>
+    <div class="meta" id="progWeeklyText">—</div>
+    <div style="height:10px;border:1px solid var(--stroke);border-radius:999px;overflow:hidden;margin-top:8px">
+      <div id="progWeeklyBar" style="height:100%;width:0%;background:rgba(255,215,0,.45)"></div>
+    </div>
+  </div>
+  <div class="badge" id="progWeeklyPct">0%</div>
+</div>
       </div>
     </div>
   </section>
@@ -556,7 +606,7 @@
       <div>
         <label>Curso / Área</label>
         <input id="pCourse" placeholder="Ex.: Data / Contábil / Concurso" />
-      </div>
+      </div>k
     </div>
 
     <div class="row">
